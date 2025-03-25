@@ -1,0 +1,118 @@
+body {
+    background-color: #1e0a2e;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.logo {
+    height: 50px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    height: 100%;
+    color: white;
+    font-weight: bold;
+}
+
+.nav-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.hero-section {
+    background: linear-gradient(90deg, #380c54, #1e0a2e);
+    position: relative;
+    overflow: hidden;
+}
+
+.cricket-title {
+    font-size: 4rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.ten-ten {
+    color: #ff0000;
+    font-size: 5rem;
+    font-weight: 900;
+}
+
+.player-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+
+.region-button {
+    background-color: #2d1a3e;
+    color: #786d86;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 0 2px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.region-button.active {
+    background-color: #4a2d6b;
+    color: white;
+}
+
+.player-row {
+    background-color: rgba(45, 26, 62, 0.5);
+    border-radius: 10px;
+    margin-bottom: 5px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.player-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4a2d6b;
+    border: 2px solid gold;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.play-button {
+    background-color: #ff0055;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 10px 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.gold-text {
+    color: #ffd700;
+}
+
+.top-players-tab {
+    padding: 10px 20px;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.ranking-number {
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+}

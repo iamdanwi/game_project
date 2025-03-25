@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teen Patti Game - Book2500</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="styles/global.css" rel="stylesheet">
+    <link href="styles/cricket.css" rel="stylesheet">
+</head>
+
+<body class="bg-[#1e0a2e] text-white">
+    <!-- Mobile Navigation Button -->
+    <button id="mobile-menu-button" class="md:hidden fixed top-4 right-4 z-30 bg-purple-600 text-white p-2 rounded">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Mobile Navigation Menu (Initially hidden) -->
+    <div id="mobile-menu"
+        class="fixed inset-y-0 right-0 w-64 bg-gray-900 text-white transform translate-x-full transition-transform duration-200 ease-in-out z-30 md:hidden">
+        <div class="flex flex-col h-full">
+            <button id="close-menu" class="p-4 text-right">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="/" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-home mr-3"></i> HOME
+            </a>
+            <a href="cricket.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-cricket-ball mr-3"></i> CRICKET
+            </a>
+            <a href="teen-patti.html" class="py-4 px-6 font-bold bg-purple-700 flex items-center">
+                <i class="fas fa-users mr-3"></i> TEEN PATTI
+            </a>
+            <a href="matka.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-coins mr-3"></i> MATAKA
+            </a>
+            <a href="aviator.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-plane mr-3"></i> AVIATOR
+            </a>
+            <a href="dragon-tiger.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-dragon mr-3"></i> DRAGON & TIGER
+            </a>
+            <a href="poker-king.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-crown mr-3"></i> POKER KING
+            </a>
+            <a href="teen-patti.html" class="py-4 px-6 font-bold bg-purple-700 flex items-center">
+                <i class="fas fa-users mr-3"></i> TEEN PATTI
+            </a>
+            <a href="matka.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-coins mr-3"></i> MATAKA
+            </a>
+            <a href="aviator.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-plane mr-3"></i> AVIATOR
+            </a>
+            <a href="dragon-tiger.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-dragon mr-3"></i> DRAGON & TIGER
+            </a>
+            <a href="poker-king.html" class="py-4 px-6 font-bold hover:bg-gray-800 flex items-center">
+                <i class="fas fa-crown mr-3"></i> POKER KING
+            </a>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile menu (Initially hidden) -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+
+    <!-- Desktop Navigation - Visible only on medium screens and up -->
+    <nav class="bg-gray-800 text-white hidden md:block">
+        <div class="container mx-auto flex">
+            <a href="/" class="bg-yellow-500 flex items-center px-4 py-2 font-bold">
+                <span>INPLAY</span>
+            </a>
+            <a href="/" class="flex items-center px-4 py-2 font-bold">
+                <i class="fas fa-home mr-2"></i> HOME
+            </a>
+            <a href="cricket.html" class="flex items-center px-4 py-2 font-bold">
+                <i class="fas fa-cricket-ball mr-2"></i> CRICKET
+            </a>
+            <a href="teen-patti.html" class="flex items-center px-4 py-2 font-bold bg-purple-700">
+                <i class="fas fa-users mr-2"></i> TEEN PATTI
+            </a>
+            <a href="matka.html" class="flex items-center px-4 py-2 font-bold">
+                <i class="fas fa-coins mr-2"></i> MATAKA
+            </a>
+            <a href="aviator.html" class="flex items-center px-4 py-2 font-bold">
+                <i class="fas fa-plane mr-2"></i> AVIATOR
+            </a>
+            <a href="dragon-tiger.html" class="flex items-center px-4 py-2 font-bold">
+                <i class="fas fa-dragon mr-2"></i> DRAGON & TIGER
+            </a>
+            <a href="poker-king.html" class="flex items-center px-4 py-2 font-bold">
+                <i class="fas fa-crown mr-2"></i> POKER KING
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-6 md:py-10 bg-gradient-to-r from-[#380c54] to-[#1e0a2e] relative overflow-hidden">
+        <div class="container mx-auto px-4 flex items-center justify-between">
+            <img src="assets/teenPatti.svg" alt="Teen Patti Game" class="w-full max-w-lg mx-auto">
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-6">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl md:text-4xl text-[#ffd700] text-center mb-6 font-bold">TEEN PATTI</h1>
+
+            <div class="flex flex-col md:flex-row">
+                <!-- Left Column -->
+                <div class="w-full md:w-1/3 md:pr-8 mb-8 md:mb-0">
+                    <div class="mb-6">
+                        <img src="assets/teenPatti.svg" alt="Teen Patti Game" class="w-full rounded-lg mb-2">
+                        <button class="w-full bg-[#ff0055] text-white font-bold py-2 px-4 rounded mb-6">PLAY
+                            NOW</button>
+                    </div>
+
+                    <div class="mb-6 text-center">
+                        <img src="assets/download.svg" alt="Download" class="mx-auto">
+                    </div>
+
+                    <div class="mb-6">
+                        <h2 class="text-xl md:text-2xl text-[#ffd700] text-center mb-4 font-bold">HOW TO PLAY</h2>
+                        <p class="text-center mb-6">
+                            Teen Patti (Three Cards) is a popular Indian card game similar to poker. Players are dealt
+                            three cards each and must bet on having the best hand. The game features various betting
+                            rounds where players can play blind or seen. Special hands like trails (three of a kind),
+                            straight flush, and pure sequence have higher values.
+                        </p>
+                        <button class="w-full bg-[#ff0055] text-white font-bold py-2 px-4 rounded mb-6">PLAY
+                            NOW</button>
+                    </div>
+
+                    <div>
+                        <img src="assets/cricket/casino_games.svg" alt="Casino Games" class="w-full">
+                        <h2 class="text-2xl md:text-3xl text-[#ffd700] text-center font-bold -mt-10">CASINO</h2>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="w-full md:w-2/3">
+                    <div class="mb-8 relative">
+                        <img src="assets/top_players.svg" alt="Top Players" class="w-full">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <h2 class="text-2xl md:text-3xl text-[#ffd700] font-bold mb-4">TOP PLAYERS</h2>
+                                <div class="flex justify-center space-x-4 mb-6">
+                                    <img src="assets/1st.svg" alt="1st Place" class="w-16">
+                                    <img src="assets/2nd.svg" alt="2nd Place" class="w-16">
+                                    <img src="assets/3rd.svg" alt="3rd Place" class="w-16">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Promotional Content -->
+                    <div class="text-center">
+                        <img src="assets/PromotionalModel.svg" alt="Promotional Model" class="w-full max-w-md mx-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>

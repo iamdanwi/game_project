@@ -1,0 +1,62 @@
+<!-- Cookie Consent Modal -->
+<div id="cookie-modal" class="modal-overlay hidden">
+    <div class="modal cookie-modal">
+        <h2>This Website uses Cookies</h2>
+        <p>We use cookies to improve your experience, tailor content and optimize functionality. For more information:
+        </p>
+        <div class="buttons">
+            <button class="btn btn-accept" onclick="acceptCookies()">ACCEPT</button>
+            <button class="btn btn-customize" onclick="customizeCookies()">Customize Cookies</button>
+        </div>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal-overlay hidden">
+    <div class="modal login-modal">
+        <div class="login-tabs">
+            <div class="login-tab active" onclick="switchTab('phone')">Phone</div>
+            <div class="login-tab" onclick="switchTab('account')">Account Number</div>
+        </div>
+
+        <!-- Phone Login Form -->
+        <form id="phone-login-form" class="login-form">
+            <div class="input-group">
+                <label>Phone No.</label>
+                <div class="phone-input">
+                    <div class="country-code">
+                        <img src="/assets/india-flag.svg" alt="India" />
+                        +91
+                    </div>
+                    <input type="tel" class="input-field" placeholder="Phone Number" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" class="input-field" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-login">LOG IN</button>
+            <button type="button" class="btn btn-demo">TRY DEMO</button>
+            <div class="register-link">
+                Don't Have an Account? <a href="#" onclick="showRegister()">Register Now</a>
+            </div>
+        </form>
+
+        <!-- Account Number Login Form -->
+        <form id="account-login-form" class="login-form hidden">
+            <div class="input-group">
+                <label>Account No.</label>
+                <input type="text" class="input-field" placeholder="Account Number" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" class="input-field" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-login">LOG IN</button>
+            <button type="button" class="btn btn-demo">TRY DEMO</button>
+            <div class="register-link">
+                Don't Have an Account? <a href="#" onclick="showRegister()">Register Now</a>
+            </div>
+        </form>
+    </div>
+</div>

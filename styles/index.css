@@ -1,0 +1,60 @@
+.game-icon {
+    width: 100px;
+    height: 100px;
+    transition: transform 0.3s;
+}
+
+.game-icon:hover {
+    transform: scale(1.1);
+}
+
+.hero-section {
+    background: linear-gradient(rgba(30, 10, 46, 0.7), rgba(30, 10, 46, 0.9));
+}
+
+.indicator-dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.indicator-dot.active {
+    background-color: white;
+}
+
+.cricket-table {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.cricket-cell {
+    padding: 10px;
+    text-align: center;
+    color: white;
+}
+
+.cell-pink {
+    background-color: rgba(255, 192, 203, 0.3);
+}
+
+.cell-blue {
+    background-color: rgba(173, 216, 230, 0.3);
+}
+
+.live-tag {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.download-button {
+    background: linear-gradient(to right, #8B6B3D, #D4AF37);
+    border: 2px solid #D4AF37;
+    border-radius: 30px;
+}
+
+.win-button {
+    background-color: #ff1a75;
+    border-radius: 30px;
+}
