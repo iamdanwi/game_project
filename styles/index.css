@@ -1,7 +1,8 @@
 .game-icon {
-    width: 100px;
-    height: 100px;
-    transition: transform 0.3s;
+    width: 100%;
+    height: auto;
+    max-width: 120px;
+    transition: transform 0.3s ease;
 }
 
 .game-icon:hover {
@@ -26,13 +27,19 @@
 
 .cricket-table {
     background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .cricket-cell {
-    padding: 10px;
+    padding: 12px;
     text-align: center;
-    color: white;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.cricket-cell:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .cell-pink {
@@ -52,9 +59,45 @@
     background: linear-gradient(to right, #8B6B3D, #D4AF37);
     border: 2px solid #D4AF37;
     border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.download-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 .win-button {
     background-color: #ff1a75;
     border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.win-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 26, 117, 0.3);
+}
+
+/* Coming Soon Page Styles */
+.coming-soon-bg {
+    background: linear-gradient(135deg, #380c54 0%, #1e0a2e 100%);
+}
+
+.coming-soon-title {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
 }

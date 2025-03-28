@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOK2500 - Cricket Live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'purple-dark': '#2D0A42',
+                        'purple-light': '#3D1255',
+                        'green-live': '#00B050',
+                        'pink-odds': '#FFCCD5',
+                        'blue-odds': '#B3E0FF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .gold-gradient {
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-purple-dark m-0 p-0">
+    <!-- Header with Logo -->
+    <header class="p-4">
+        <div class="text-5xl font-bold gold-gradient">BOOK2500</div>
+    </header>
+
+    <!-- Main Cricket Match Display -->
+    <div class="relative w-full h-[300px] bg-cover bg-center"
+        style="background-image: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cricket%20live-aJqL5FdJfRDqlfvU1XLwgRqaXcS2x8.png');">
+        <!-- Cricket Trophy Image -->
+        <div class="absolute left-[10%] top-1/2 transform -translate-y-1/2 w-[150px]">
+            <img src="/placeholder.svg?height=150&width=150" alt="Cricket Trophy" class="w-full">
+        </div>
+
+        <!-- Match Scoreboard -->
+        <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] bg-gray-800 bg-opacity-80 rounded-lg border border-gray-600 text-white p-4">
+            <!-- Teams and Scores -->
+            <div class="flex justify-center items-center gap-4 mb-2">
+                <div class="text-center">
+                    <div class="text-2xl font-bold">CSK</div>
+                    <div class="text-sm">(183/6)</div>
+                </div>
+                <div class="text-xl font-bold">VS</div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold">Dc</div>
+                    <div class="text-sm">(141/3)</div>
+                </div>
+            </div>
+
+            <!-- Batsmen Stats Table -->
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-600">
+                        <th class="text-left p-1">Batsmen</th>
+                        <th class="p-1">R</th>
+                        <th class="p-1">B</th>
+                        <th class="p-1">4s</th>
+                        <th class="p-1">6s</th>
+                        <th class="p-1">R</th>
+                        <th class="p-1">B</th>
+                        <th class="p-1">4s</th>
+                        <th class="p-1">6s</th>
+                        <th class="p-1">4s</th>
+                        <th class="p-1">6s</th>
+                        <th class="p-1">SR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-gray-900 bg-opacity-50">
+                        <td class="text-left p-1">D Warner</td>
+                        <td class="p-1">26</td>
+                        <td class="p-1">20</td>
+                        <td class="p-1">01</td>
+                        <td class="p-1">01</td>
+                        <td class="p-1">26</td>
+                        <td class="p-1">20</td>
+                        <td class="p-1">01</td>
+                        <td class="p-1">01</td>
+                        <td class="p-1">01</td>
+                        <td class="p-1">01</td>
+                        <td class="p-1">110.45</td>
+                    </tr>
+                    <tr class="bg-gray-900 bg-opacity-50">
+                        <td class="text-left p-1">P Shaw</td>
+                        <td class="p-1">42</td>
+                        <td class="p-1">41</td>
+                        <td class="p-1">03</td>
+                        <td class="p-1">00</td>
+                        <td class="p-1">42</td>
+                        <td class="p-1">41</td>
+                        <td class="p-1">03</td>
+                        <td class="p-1">00</td>
+                        <td class="p-1">03</td>
+                        <td class="p-1">00</td>
+                        <td class="p-1">102.50</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- This Over -->
+            <div class="mt-4 flex items-center justify-center gap-2">
+                <div class="text-sm">This Over</div>
+                <div class="flex gap-1">
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs">1
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs">2
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs">0
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs">2
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs">1
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center text-xs">•
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="bg-purple-light p-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="text-white text-xl font-bold">CRICKET</div>
+        </div>
+        <div class="flex gap-2">
+            <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                <span class="mr-1">+</span> LIVE
+            </button>
+            <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                <span class="mr-1">+</span> VIRTUAL
+            </button>
+        </div>
+    </div>
+
+    <!-- Live Matches Section -->
+    <div class="p-4">
+        <div class="text-green-live text-2xl font-bold mb-4">LIVE</div>
+
+        <!-- Match 1 -->
+        <div class="mb-4">
+            <div class="text-gray-400">Feb 14 2025 19:30 (IST)</div>
+            <div class="flex justify-between items-center">
+                <div class="text-white text-xl">Indian cricket team</div>
+                <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                    <span class="mr-1">+</span> LIVE
+                </button>
+                <div class="flex">
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match 2 -->
+        <div class="mb-4">
+            <div class="text-gray-400">Feb 14 2025 19:30 (IST)</div>
+            <div class="flex justify-between items-center">
+                <div class="text-white text-xl">Indian cricket team</div>
+                <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                    <span class="mr-1">+</span> LIVE
+                </button>
+                <div class="flex">
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match 3 -->
+        <div class="mb-4">
+            <div class="text-gray-400">Feb 14 2025 19:30 (IST)</div>
+            <div class="flex justify-between items-center">
+                <div class="text-white text-xl">Indian cricket team</div>
+                <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                    <span class="mr-1">+</span> LIVE
+                </button>
+                <div class="flex">
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match 4 -->
+        <div class="mb-4">
+            <div class="text-gray-400">Feb 14 2025 19:30 (IST)</div>
+            <div class="flex justify-between items-center">
+                <div class="text-white text-xl">Indian cricket team</div>
+                <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                    <span class="mr-1">+</span> LIVE
+                </button>
+                <div class="flex">
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match 5 -->
+        <div class="mb-4">
+            <div class="text-gray-400">Feb 14 2025 19:30 (IST)</div>
+            <div class="flex justify-between items-center">
+                <div class="text-white text-xl">Indian cricket team</div>
+                <button class="border border-white rounded-full px-6 py-2 text-white flex items-center">
+                    <span class="mr-1">+</span> LIVE
+                </button>
+                <div class="flex">
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                    <div class="w-20 h-12 bg-blue-odds flex items-center justify-center">------</div>
+                    <div class="w-20 h-12 bg-pink-odds flex items-center justify-center font-bold">1.42</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
