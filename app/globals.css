@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 275 80% 14%;
+    --foreground: 0 0% 100%;
+
+    --card: 275 80% 14%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 275 80% 14%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 0 100% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 120 95% 33%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 275 40% 20%;
+    --muted-foreground: 0 0% 80%;
+
+    --accent: 42 100% 65%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 275 40% 20%;
+    --input: 275 40% 20%;
+    --ring: 42 100% 65%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-brand-purple text-foreground;
+  }
+}
+
+.game-card {
+  transition: transform 0.3s ease;
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+}
+
+.hero-slider {
+  position: relative;
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: white;
+}
+
+.status-win {
+  @apply bg-green-600 text-white px-2 py-1 rounded-md text-sm font-medium;
+}
+
+.status-lost {
+  @apply bg-red-600 text-white px-2 py-1 rounded-md text-sm font-medium;
+}
+
+.status-pending {
+  @apply bg-yellow-500 text-white px-2 py-1 rounded-md text-sm font-medium;
+}
+
+.completed {
+  @apply bg-green-600 text-white px-2 py-1 rounded-md text-sm font-medium;
+}
+
+.button-primary {
+  @apply bg-brand-red hover:bg-red-700 text-white font-bold py-2 px-4 rounded;
+}
+
+.button-secondary {
+  @apply bg-brand-green hover:bg-green-700 text-white font-bold py-2 px-4 rounded;
+}
+
