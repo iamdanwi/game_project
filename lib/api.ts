@@ -121,7 +121,7 @@ export async function fetchEvents(): Promise<EventData[]> {
     //   headers["Authorization"] = `Bearer ${token}`
     // }
 
-    const response = await fetch("http://test.book2500.in/fetch-event/")
+    const response = await fetch("https://test.book2500.in/fetch-event/")
     if (!response.ok) {
       throw new Error(`Failed to fetch events: ${response.statusText}`)
     }
