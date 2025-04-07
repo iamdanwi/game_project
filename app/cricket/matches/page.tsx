@@ -49,7 +49,7 @@ export default function CricketMatchesPage() {
     }
 
     fetchMatchData()
-    const interval = setInterval(fetchMatchData, 1000) // Refresh every 5 seconds
+    const interval = setInterval(fetchMatchData, 5000) // Update every 5 seconds
 
     return () => {
       isSubscribed = false
@@ -126,6 +126,12 @@ export default function CricketMatchesPage() {
                           })} (IST)
                         </div>
                         <div className="text-base sm:text-xl font-semibold text-white">{match.event.name}</div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          Markets: {match.marketCount} | Country: {match.event.countryCode}
+                          {match.marketIds.length > 0 && (
+                            <span> | Market: {match.marketIds[0].marketName} | Matched: ₹{parseFloat(match.marketIds[0].totalMatched).toLocaleString()}</span>
+                          )}
+                        </div>
                       </div>
 
                       <Link href={`/cricket/live?match=${match.event.id}`} className="w-full sm:w-auto">
@@ -136,8 +142,8 @@ export default function CricketMatchesPage() {
                     </div>
 
                     {/* Market Info */}
-                    <div className="p-2 rounded overflow-hidden text-xs sm:text-sm">
-                      {'odds' in match && match.odds?.runners?.length ? (
+                    <div className="p-2 rounded overflow-hidden text-xs sm:text-sm bg-black/20">
+                      {'odds' in match && Array.isArray(match.odds?.runners) && match.odds.runners.length > 0 ? (
                         <>
                           <div className="flex justify-between items-center mb-2">
                             <div className="text-blue-400 font-bold">BACK</div>
@@ -145,6 +151,7 @@ export default function CricketMatchesPage() {
                           </div>
                           {match.odds.runners.map((runner) => (
                             <div key={runner.selectionId} className="mb-2 last:mb-0">
+                              <div className="text-white mb-1 font-medium">{runner.runner}</div>
                               <div className="grid grid-cols-6 gap-1">
                                 {/* Back odds */}
                                 {[2, 1, 0].map((index) => (

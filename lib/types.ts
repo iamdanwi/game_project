@@ -33,3 +33,41 @@ export interface Profile {
     image: string | null;
     image_url: string;
 }
+
+export interface EventData {
+    event: {
+        id: string;
+        name: string;
+        countryCode: string;
+        timezone: string;
+        openDate: string;
+    };
+    bfid: string;
+    marketCount: number;
+    marketIds: Array<{
+        marketId: string;
+        marketName: string;
+        marketStartTime: string;
+        totalMatched: string;
+    }>;
+    scoreboard_id: string;
+    selections: string;
+    liability_type: number;
+    undeclared_markets: number;
+    odds?: {
+        runners: Array<{
+            selectionId: string;
+            runner: string;
+            ex?: {
+                availableToBack?: Array<{
+                    price: number;
+                    size: number;
+                }>;
+                availableToLay?: Array<{
+                    price: number;
+                    size: number;
+                }>;
+            };
+        }>;
+    };
+}

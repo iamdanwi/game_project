@@ -1,7 +1,9 @@
-import type { FancyBet, Profile } from "./types"
+import type { FancyBet, Profile, EventData } from "./types"
 
 // API Service
 const baseUrl = "https://book2500.funzip.in/api"
+// const baseUrl = "http://book2500.in:3000"
+// const baseUrl = "http://test.book2500.in"
 
 export const API_ENDPOINTS = {
   login: `${baseUrl}/login`,
@@ -24,6 +26,10 @@ export const API_ENDPOINTS = {
   changePassword: `${baseUrl}/password`,
   updateProfile: `${baseUrl}/profile-setting`,
   categoryMatch: `${baseUrl}/category/`,
+  events: `${baseUrl}/fetch-event/`,
+  eventOdds: `${baseUrl}/fetch-event-odds`,
+  bookmakerOdds: `${baseUrl}/fetch-bookmaker-odds`,
+  fancyOdds: `${baseUrl}/fetch-fancy-odds`,
 }
 
 // Types for API responses
@@ -101,6 +107,63 @@ export async function fetchHomeData() {
     throw error
   }
 }
+
+// Fetch live cricket events
+export async function fetchEvents(): Promise<EventData[]> {
+  try {
+    // const token = localStorage.getItem("auth_token")
+    // const headers: HeadersInit = {
+    //   Accept: "application/json",
+    //   "Content-Type": "application/json",
+    // }
+
+    // if (token) {
+    //   headers["Authorization"] = `Bearer ${token}`
+    // }
+
+    const response = await fetch("http://test.book2500.in/fetch-event/")
+    if (!response.ok) {
+      throw new Error(`Failed to fetch events: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid response format')
+    }
+
+    return Array.isArray(data) ? data : []
+  } catch (error) {
+    console.error("Error fetching events:", error)
+    throw error
+  }
+}
+
+// Fetch odds for a specific event
+export async function fetchEventOdds(eventId: string, marketId: string) {
+  try {
+    const token = localStorage.getItem("auth_token")
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${API_ENDPOINTS.eventOdds}/${eventId}/${marketId}`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch event odds: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.odds || null
+  } catch (error) {
+    console.error(`Error fetching odds for event ${eventId}:`, error)
+    throw error
+  }
+}
+
 
 export async function fetchCategoryMatches(category?: string) {
   try {
@@ -448,6 +511,59 @@ export async function fetchLiveFancyBets(matchId: string) {
   } catch (error) {
     console.error("Error fetching fancy bets:", error) // Log error for debugging
     return { fancy: [] } // Return empty data on error
+  }
+}
+
+
+// Fetch bookmaker odds for a specific event
+export async function fetchBookmakerOdds(eventId: string, marketId: string) {
+  try {
+    const token = localStorage.getItem("auth_token")
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${API_ENDPOINTS.bookmakerOdds}/${eventId}/${marketId}`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch bookmaker odds: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.odds || null
+  } catch (error) {
+    console.error(`Error fetching bookmaker odds for event ${eventId}:`, error)
+    throw error
+  }
+}
+
+// Fetch fancy odds for a specific event
+export async function fetchFancyOdds(eventId: string, marketId: string) {
+  try {
+    const token = localStorage.getItem("auth_token")
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${API_ENDPOINTS.fancyOdds}/${eventId}/${marketId}`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch fancy odds: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.odds || null
+  } catch (error) {
+    console.error(`Error fetching fancy odds for event ${eventId}:`, error)
+    throw error
   }
 }
 

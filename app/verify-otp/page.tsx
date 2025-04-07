@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { verifyOtp, resendOtp } from "@/lib/api"
 
-export default function VerifyOtpPage() {
+function VerifyOtpContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const phone = searchParams.get("phone") || ""
@@ -121,5 +121,21 @@ export default function VerifyOtpPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function VerifyOtpPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-[calc(100vh-136px)]">
+                <div className="w-full max-w-md mx-auto p-6 flex items-center">
+                    <div className="w-full bg-brand-darkPurple rounded-lg shadow-xl p-8 text-center">
+                        <div className="text-white">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        }>
+            <VerifyOtpContent />
+        </Suspense>
     )
 }
