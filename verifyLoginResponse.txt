@@ -1,0 +1,31 @@
+{
+    "login": true,
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiODRmNTg3ZWRhZWVkMmQ1YzViOTlmZDg5MDk5ZTI3MGQ4NjAwYjQwOWYyYmZiN2IxNzY5MDY5M2YwMGZhYThmNzhiZjY1NWM3YWU1ZTY2MTQiLCJpYXQiOjE3NDQxMzkzNTAuNzA1OTgzLCJuYmYiOjE3NDQxMzkzNTAuNzA1OTg4LCJleHAiOjE3NzU2NzUzNTAuNzA0NzY1LCJzdWIiOiIxMiIsInNjb3BlcyI6W119.c4SP4JFWDwxEOhqbKZsIAAxas7YuaktFlhjcNkNwAvvdhQ8KBL3HRycSI6PXyV72TvXyZWq_0yLG4Q5x-9mHSEgQ2zAqgn_9g2I9G_9uOe7RKEaCd_qnNcR5aC83CH07xMcRdatjtNQbeY6zULoVI0SzgEvcAO5WtJfIprnFk6LpGwahWdiWejvnhQgVSxrnwREHB4aiXQlF5m6axIlrkzUDYcuEJ5H6lQjvi80KApxvbWOrEduZbQFRUw81lKk3DMhMvRZW53ONJUCSPdmMhhQyRv7kntk_TtfELwHjt3ZDCuIgDT0VMlvJWwtNoeZLjL_y5zO93QZl02wZapy7DLDD7jLfVw1Bw-eBFj3Ema5xAPR9XM8zYllRIuQgAUR8FoszSNBBt9VtqIJBQdSoruPHeaTFt9GlsoedG2-sHPSpjvoTY0rz1hnsE1eUu2jDZLKFitSSwbsNtPj1lG58nGxJK6CfVzwY7oiL0OXHDQSHNbgLe81yWhwlbQ0Nam-Iok4DbmFM2Wsu1sr7noPujZtVfvD7WbcA8KCc7hWIJdIHfhGy7191EpWuBmVmS7gJaeY4Uh7l_Rg-nce82J4XRAgaahvklbWim7Mr9DcaZklXVdMhbjvazK1ECjxCXwoDeJEGCqv9PQBN8rGul1JkHmq9d6bb--xKpgcdvlw8TQU",
+    "message": "Login successful",
+    "data": {
+        "id": 12,
+        "name": "Dainwi Kumar",
+        "email": "danwichoudhary@gmail.com",
+        "mobile": "+919905308845",
+        "email_verified_at": "2025-04-08T16:24:38.000000Z",
+        "tfver": "0",
+        "emailv": "0",
+        "vercode": "0",
+        "balance": "10000000",
+        "gender": "0",
+        "address": null,
+        "zip_code": null,
+        "city": null,
+        "country": null,
+        "vsent": null,
+        "secretcode": "0",
+        "tauth": "0",
+        "ref_id": null,
+        "referral_token": "4yNAvykKYAn5",
+        "status": "1",
+        "created_at": "2025-04-08T16:24:38.000000Z",
+        "updated_at": "2025-04-08T19:07:05.000000Z",
+        "image": null,
+        "image_url": "https:\/\/book2500.funzip.in\/public\/images\/user-default.jpg"
+    }
+}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User } from "lucide-react"
 
 export default function Header() {
   const { isAuthenticated, logout } = useAuth()
@@ -36,12 +36,23 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
-            <Button
-              onClick={logout}
-              className="bg-brand-red hover:bg-red-700 text-white"
-            >
-              Logout
-            </Button>
+            <>
+              <Link href="/profile">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-brand-purple bg-accent "
+                >
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Button
+                onClick={logout}
+                className="bg-brand-red hover:bg-red-700 text-white"
+              >
+                Logout
+              </Button>
+            </>
           ) : (
             <>
               <Link href="/login">

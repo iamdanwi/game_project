@@ -1,15 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { Runner } from "@/lib/types"
+import { createPrediction } from "@/lib/api"
+import { toast } from "sonner"
 
 interface SelectedBet {
     name: string
     type: string
     section: string
+    selectionId?: number
 }
 
 const MIN_STAKE = 100
@@ -19,12 +22,26 @@ const predefinedStakes = [
     [5000, 10000, 25000, 50000],
 ]
 
-interface BookmakerOdds {
-    RunnerName: string
-    BackPrice1: number
-    BackSize1: number
-    LayPrice1: number
-    LaySize1: number
+interface BookmakerMarket {
+    marketId: string
+    evid: string
+    inplay: boolean
+    mname: string
+    min: string
+    max: string
+    rem: string
+    runners: BookmakerRunner[]
+    status: string
+}
+
+interface BookmakerRunner {
+    selectionId: number
+    runnerName: string
+    status: string
+    lastPriceTraded: number
+    totalMatched: number
+    batb: Array<[number, number]>
+    batl: Array<[number, number]>
 }
 
 interface FancyOdds {
@@ -38,19 +55,42 @@ interface FancyOdds {
 }
 
 export default function LiveMatch() {
-    const [isAuthenticated, setIsAuthenticated] = useState(true)
+    const router = useRouter()
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [selectedBet, setSelectedBet] = useState<SelectedBet | null>(null)
     const [selectedOdds, setSelectedOdds] = useState("")
     const [selectedStake, setSelectedStake] = useState("")
     const [eventOdds, setEventOdds] = useState<{ eventName: string; runners: Runner[] }>({ eventName: "", runners: [] })
     const [fancyOdds, setFancyOdds] = useState<FancyOdds[]>([])
-    const [bookmakerOdds, setBookmakerOdds] = useState<BookmakerOdds[]>([])
+    const [bookmakerMarket, setBookmakerMarket] = useState<BookmakerMarket | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [betError, setBetError] = useState<string | null>(null)
+    const [userBalance, setUserBalance] = useState<string>("0")
 
     const searchParams = useSearchParams()
     const eventId = searchParams.get("match")
     const marketId = searchParams.get("market")
+
+    useEffect(() => {
+        const token = localStorage.getItem('auth_token')
+        setIsAuthenticated(!!token)
+    }, [])
+
+    const updateUserBalance = async () => {
+        try {
+            const userData = localStorage.getItem('user_data')
+            if (userData) {
+                const parsedData = JSON.parse(userData)
+                setUserBalance(parsedData.balance || "0")
+            }
+        } catch (error) {
+            console.error("Error updating balance:", error)
+        }
+    }
+
+    useEffect(() => {
+        updateUserBalance()
+    }, [])
 
     const handleStakeButton = (type: "min" | "max") => {
         setSelectedStake(type === "min" ? MIN_STAKE.toString() : MAX_STAKE.toString())
@@ -61,7 +101,13 @@ export default function LiveMatch() {
         setSelectedOdds("")
     }
 
-    const handlePlaceBet = () => {
+    const handlePlaceBet = async () => {
+        if (!isAuthenticated) {
+            toast.error("Please login to place bets")
+            router.push('/login')
+            return
+        }
+
         setBetError(null)
 
         if (!selectedBet || !selectedOdds || !selectedStake) {
@@ -75,12 +121,50 @@ export default function LiveMatch() {
             return
         }
 
-        // TODO: Implement bet placement logic here
-        console.log("Placing bet:", {
-            bet: selectedBet,
-            odds: selectedOdds,
-            stake: stakeAmount,
-        })
+        try {
+            const predictionData = {
+                invested_amount: stakeAmount,
+                event_id: eventId!,
+                market_id: marketId!,
+                selection_id: selectedBet.selectionId?.toString() || "",
+                type: "event-odds",  // Fixed type value
+                is_back: selectedBet.type === 'BACK',
+                ratio: Number(selectedOdds),
+                level: 1,
+                bet_category: selectedBet.section.toLowerCase(),
+                match_name: eventOdds.eventName,
+                runner_name: selectedBet.name
+            }
+
+            const response = await createPrediction(predictionData)
+
+            if (response.success) {
+                const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
+                const newBalance = Number(userData.balance) - Number(selectedStake)
+                userData.balance = newBalance.toString()
+                localStorage.setItem('user_data', JSON.stringify(userData))
+
+                setUserBalance(newBalance.toString())
+
+                toast("Bet Placed Successfully!", {
+                    description: `${selectedBet?.name} - ₹${selectedStake} @ ${selectedOdds}`,
+                    action: {
+                        label: "View Bets",
+                        onClick: () => router.push('/bet-log')
+                    },
+                })
+                handleClearStake()
+                setSelectedBet(null)
+            } else {
+                toast.error("Failed to place bet", {
+                    description: response.message || "Please try again"
+                })
+            }
+        } catch (error: any) {
+            toast.error("Error", {
+                description: error.message || "Failed to place bet. Please try again."
+            })
+        }
     }
 
     const isValidRunner = (runner: Runner): boolean => {
@@ -92,6 +176,12 @@ export default function LiveMatch() {
         type: "back" | "lay" | "no" | "yes",
         section: "match" | "bookmaker" | "fancy",
     ) => {
+        if (!isAuthenticated) {
+            toast.error("Please login to place bets")
+            router.push('/login')
+            return
+        }
+
         setBetError(null)
 
         try {
@@ -108,8 +198,8 @@ export default function LiveMatch() {
                 oddsValue = odds.price.toFixed(2)
                 size = odds.size
             } else if (section === "bookmaker") {
-                const price = type === "back" ? runner.BackPrice1 : runner.LayPrice1
-                const betSize = type === "back" ? runner.BackSize1 : runner.LaySize1
+                const price = type === "back" ? runner.batb?.[0]?.[0] : runner.batl?.[0]?.[0]
+                const betSize = type === "back" ? runner.batb?.[0]?.[1] : runner.batl?.[0]?.[1]
                 if (!price || price <= 0) {
                     setBetError("Invalid odds data for bookmaker bet")
                     return
@@ -135,6 +225,7 @@ export default function LiveMatch() {
                 name: runner.runner || runner.RunnerName,
                 type: type.toUpperCase(),
                 section: section.toUpperCase(),
+                selectionId: runner.selectionId || runner.SelectionId
             })
             setSelectedOdds(oddsValue)
             setSelectedStake("")
@@ -165,7 +256,9 @@ export default function LiveMatch() {
             }
 
             setFancyOdds(Array.isArray(fancyRes?.data) ? fancyRes.data : [])
-            setBookmakerOdds(Array.isArray(bookmakerRes?.data) ? bookmakerRes.data : [])
+            if (bookmakerRes?.data) {
+                setBookmakerMarket(bookmakerRes.data)
+            }
             setError(null)
         } catch (err) {
             console.error(err)
@@ -186,12 +279,6 @@ export default function LiveMatch() {
             <Button className="bg-brand-gold hover:bg-yellow-500 text-black font-bold">Login Now</Button>
         </div>
     )
-
-    // if (loading) return (
-    //   <div className="flex items-center justify-center min-h-screen bg-brand-purple">
-    //     <div className="text-white text-xl">Loading...</div>
-    //   </div>
-    // );
 
     if (error)
         return (
@@ -278,34 +365,64 @@ export default function LiveMatch() {
                     {/* Bookmaker Section */}
                     <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
                         <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
-                            <h2 className="text-lg sm:text-xl font-bold text-white">BOOKMAKER</h2>
-                            <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
+                            <div>
+                                <h2 className="text-lg sm:text-xl font-bold text-white">{bookmakerMarket?.mname || "BOOKMAKER"}</h2>
+                                {bookmakerMarket?.rem && (
+                                    <p className="text-xs text-gray-300 mt-1">{bookmakerMarket.rem}</p>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {bookmakerMarket?.inplay && (
+                                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">Live</span>
+                                )}
+                                <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
+                            </div>
                         </div>
                         <div className="p-4 text-sm">
                             <div className="text-gray-400 mb-2">
-                                Min: {MIN_STAKE} | Max: {MAX_STAKE}
+                                Min: {bookmakerMarket?.min || MIN_STAKE} | Max: {bookmakerMarket?.max || MAX_STAKE}
                             </div>
                             <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4">
                                 <div className="text-center text-blue-400 font-bold">BACK</div>
                                 <div className="text-center text-pink-400 font-bold">LAY</div>
                             </div>
-                            {bookmakerOdds.map((odd, idx) => (
+                            {(bookmakerMarket?.runners || []).map((runner, idx) => (
                                 <div key={idx} className="mb-6 last:mb-0">
-                                    <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{odd.RunnerName}</div>
+                                    <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
+                                        {runner.runnerName}
+                                    </div>
                                     <div className="grid grid-cols-2 gap-2 sm:gap-4">
                                         <div
-                                            onClick={() => handleOddsClick(odd, "back", "bookmaker")}
-                                            className={`bg-blue-600/20 rounded p-2 text-center ${odd.BackPrice1 > 0 ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                            className={`relative bg-blue-600/20 rounded p-2 text-center ${runner.status === "ACTIVE" ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50"
+                                                }`}
                                         >
-                                            <div className="text-blue-400 font-bold">{odd.BackPrice1}</div>
-                                            <div className="text-xs text-gray-400">{odd.BackSize1.toLocaleString()}</div>
+                                            <div className="text-blue-400 font-bold">
+                                                {runner.batb?.[0]?.[0] || "-"}
+                                            </div>
+                                            <div className="text-xs text-gray-400">
+                                                {runner.batb?.[0]?.[1]?.toLocaleString() || "0"}
+                                            </div>
+                                            {runner.status !== "ACTIVE" && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                    {runner.status}
+                                                </div>
+                                            )}
                                         </div>
                                         <div
-                                            onClick={() => handleOddsClick(odd, "lay", "bookmaker")}
-                                            className={`bg-pink-600/20 rounded p-2 text-center ${odd.LayPrice1 > 0 ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                            className={`relative bg-pink-600/20 rounded p-2 text-center ${runner.status === "ACTIVE" ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50"
+                                                }`}
                                         >
-                                            <div className="text-pink-400 font-bold">{odd.LayPrice1}</div>
-                                            <div className="text-xs text-gray-400">{odd.LaySize1.toLocaleString()}</div>
+                                            <div className="text-pink-400 font-bold">
+                                                {runner.batl?.[0]?.[0] || "-"}
+                                            </div>
+                                            <div className="text-xs text-gray-400">
+                                                {runner.batl?.[0]?.[1]?.toLocaleString() || "0"}
+                                            </div>
+                                            {runner.status !== "ACTIVE" && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                    {runner.status}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -384,6 +501,9 @@ export default function LiveMatch() {
                                             "Select a bet"
                                         )}
                                     </div>
+                                </div>
+                                <div className="text-gray-300 text-sm">
+                                    Balance: ₹{userBalance}
                                 </div>
                             </div>
 

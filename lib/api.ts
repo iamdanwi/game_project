@@ -569,3 +569,65 @@ export async function fetchFancyOdds(eventId: string, marketId: string) {
   }
 }
 
+interface PredictionPayload {
+  invest_amount: number
+  // betoption_id: number
+  // betquestion_id: number
+  // match_id: number
+  market_id: string
+  event_id: string
+  // game_id: number
+  // stake: number
+  // odds: number
+  selection_id: string
+  type: string
+  is_back: boolean
+  level: number
+  ratio: number
+}
+
+interface PredictionResponse {
+  success: boolean
+  message: string
+  data?: any
+}
+
+export async function createPrediction(predictionData: any): Promise<PredictionResponse> {
+  try {
+    const token = localStorage.getItem("auth_token")
+    if (!token) throw new Error("Authentication required")
+
+    const response = await fetch(`${baseUrl}/prediction`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...predictionData,
+        invested_amount: Number(predictionData.invested_amount),
+        ratio: Number(predictionData.ratio),
+        level: Number(predictionData.level)
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to create prediction')
+    }
+
+    return {
+      success: true,
+      message: data.message || 'Prediction created successfully',
+      data: data.data
+    }
+  } catch (error: any) {
+    console.error("Error creating prediction:", error)
+    return {
+      success: false,
+      message: error.message || "Failed to create prediction"
+    }
+  }
+}
+

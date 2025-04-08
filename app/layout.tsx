@@ -5,6 +5,7 @@ import "./globals.css"
 import Header from "@/components/ui/header"
 import Footer from "@/components/ui/footer"
 import { AuthProvider } from "@/context/AuthContext"
+import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </AuthProvider>
+        <Toaster richColors expand={true} position="top-center" />
       </body>
     </html>
   )
