@@ -34,6 +34,21 @@ export interface Profile {
     image_url: string;
 }
 
+export interface Runner {
+    runner: string;
+    selectionId: string;
+    ex?: {
+        availableToBack?: Array<{
+            price: number;
+            size: number;
+        }>;
+        availableToLay?: Array<{
+            price: number;
+            size: number;
+        }>;
+    };
+}
+
 export interface EventData {
     event: {
         id: string;
@@ -55,19 +70,47 @@ export interface EventData {
     liability_type: number;
     undeclared_markets: number;
     odds?: {
-        runners: Array<{
-            selectionId: string;
-            runner: string;
-            ex?: {
-                availableToBack?: Array<{
-                    price: number;
-                    size: number;
-                }>;
-                availableToLay?: Array<{
-                    price: number;
-                    size: number;
-                }>;
-            };
-        }>;
+        runners: Runner[];
+    };
+}
+
+export interface BetLog {
+    id: number;
+    user_id: string;
+    match_id: string;
+    invest_amount: string;
+    return_amount: string;
+    remaining_balance: string;
+    ratio: string;
+    status: string;
+    created_at: string;
+    image_url_team_1: string;
+    image_url_team_2: string;
+    match: {
+        team_1: string;
+        team_2: string;
+    };
+    ques: {
+        question: string;
+    };
+    betoption: {
+        option_name: string;
+    };
+}
+
+export interface ApiResponse<T> {
+    status: string;
+    message?: string;
+    data: T | null;
+    success?: boolean;
+    page_title?: string;
+}
+
+export interface EventOddsResponse {
+    eventName: string;
+    runners: Runner[];
+    data?: {
+        eventName: string;
+        runners: Runner[];
     };
 }

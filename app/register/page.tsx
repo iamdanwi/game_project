@@ -40,27 +40,16 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      // Format phone number if needed
-      let formattedMobile = mobile
-      if (!formattedMobile.startsWith("+")) {
-        formattedMobile = "+" + formattedMobile
-      }
-      if (!formattedMobile.startsWith("+91")) {
-        formattedMobile = "+91" + formattedMobile.substring(1)
-      }
-      formattedMobile = "+91" + formattedMobile.substring(1)
+      const response = await signUp(name, email, mobile)
 
-      const response = await signUp(name, email, formattedMobile)
-
-      if (response.status === "success") {
-        setTempToken(response.temp_token)
-        setIsOtpSent(true)
-        startCountdown()
+      if (response.success === true) {
+        // Redirect to OTP verification with signup flag
+        router.push(`/verify-otp?phone=${encodeURIComponent(mobile)}&token=${encodeURIComponent(response.temp_token)}&isSignup=true`)
       } else {
         setError(response.message || "Registration failed. Please try again.")
       }
     } catch (error) {
-      setError("Registration failed. Please check your details and try again.")
+      setError("Registration failed. Please check your details.")
     } finally {
       setLoading(false)
     }

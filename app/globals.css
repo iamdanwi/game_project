@@ -34,15 +34,79 @@
 
     --radius: 0.5rem;
   }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply antialiased text-base md:text-base;
+    @apply bg-brand-purple text-foreground;
+    touch-action: manipulation;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-brand-purple text-foreground;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .safe-paddings {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Responsive card grid */
+.game-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6;
+}
+
+/* Mobile optimized buttons */
+.button-primary,
+.button-secondary {
+  @apply w-full md:w-auto min-h-[44px] touch-manipulation;
+}
+
+/* Responsive typography */
+.h1 {
+  @apply text-2xl md:text-4xl font-bold;
+}
+
+.h2 {
+  @apply text-xl md:text-3xl font-bold;
+}
+
+.h3 {
+  @apply text-lg md:text-2xl font-bold;
+}
+
+.h4 {
+  @apply text-base md:text-xl font-semibold;
+}
+
+/* Mobile-first spacing */
+.section-padding {
+  @apply py-6 md:py-12;
+}
+
+.content-padding {
+  @apply px-4 md:px-6;
 }
 
 .game-card {
@@ -102,4 +166,3 @@
 .button-secondary {
   @apply bg-brand-green hover:bg-green-700 text-white font-bold py-2 px-4 rounded;
 }
-

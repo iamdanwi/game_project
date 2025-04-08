@@ -1,0 +1,128 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
+
+export default function EventOddsPage() {
+  const searchParams = useSearchParams();
+  const eventId = searchParams.get('match');   // event ID
+  const marketId = searchParams.get('market'); // market ID
+
+  const [eventOdds, setEventOdds] = useState<any>(null);
+  const [fencyOdds, setFencyOdds] = useState<any[]>([]);
+  const [bookmarkOdds, setBookmarkOdds] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchOddsData = async () => {
+    if (!eventId || !marketId) {
+      setError('Missing event or market ID in URL.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const [eventRes, fencyRes, bookmarkRes] = await Promise.all([
+        axios.get(`https://test.book2500.in/fetch-event-odds/${eventId}/${marketId}`),
+        axios.get(`https://test.book2500.in/fetch-fancy-odds/${eventId}/${marketId}`),
+        axios.get(`https://test.book2500.in/fetch-bookmaker-odds/${eventId}/${marketId}`),
+      ]);
+      
+      setEventOdds(eventRes.data?.data || null);
+      setFencyOdds(Array.isArray(fencyRes.data?.data) ? fencyRes.data.data : []);
+      setBookmarkOdds(Array.isArray(bookmarkRes.data?.data) ? bookmarkRes.data.data : []);
+      
+    } catch (err: any) {
+      console.error(err);
+      setError('Failed to fetch odds data.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOddsData();
+  }, [eventId, marketId]);
+
+  if (loading) return <p className="p-4">Loading...</p>;
+  if (error) return <p className="p-4 text-red-600">{error}</p>;
+
+  return (
+    <div className="p-4 space-y-6 bg-gray-100 min-h-screen">
+      <div className="text-xl font-bold bg-blue-900 text-white px-4 py-3 rounded-t-lg">
+        {eventOdds?.eventName || 'Match Odds'}
+      </div>
+
+      {/* Match Odds */}
+      {eventOdds && (
+        <div className="bg-white rounded-xl shadow overflow-hidden">
+          <div className="bg-blue-100 px-4 py-2 font-semibold text-blue-900">MATCH ODDS</div>
+          <div className="divide-y">
+            {eventOdds.runners?.map((runner: any, idx: number) => (
+              <div key={idx} className="grid grid-cols-3 md:grid-cols-7 items-center gap-2 px-4 py-2 text-sm">
+                <div className="col-span-3 font-semibold text-gray-800">{runner.runner}</div>
+                <div className="col-span-2 flex flex-wrap gap-1">
+                  {runner.back?.map((b: any, i: number) => (
+                    <span key={i} className="bg-blue-200 px-2 py-1 rounded text-xs">
+                      {b.price} ({b.size})
+                    </span>
+                  ))}
+                </div>
+                <div className="col-span-2 flex flex-wrap gap-1">
+                  {runner.lay?.map((l: any, i: number) => (
+                    <span key={i} className="bg-pink-200 px-2 py-1 rounded text-xs">
+                      {l.price} ({l.size})
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Bookmaker Odds */}
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="bg-blue-100 px-4 py-2 font-semibold text-blue-900">BOOKMAKER</div>
+        {bookmarkOdds.map((odd: any, i: number) => (
+          <div key={i} className="grid grid-cols-3 md:grid-cols-7 items-center gap-2 px-4 py-2 text-sm">
+            <div className="col-span-3 font-semibold text-gray-800">{odd.RunnerName}</div>
+            <div className="col-span-2">
+              <span className="bg-blue-200 px-2 py-1 rounded text-xs">
+                {odd.BackPrice1} ({odd.BackSize1})
+              </span>
+            </div>
+            <div className="col-span-2">
+              <span className="bg-pink-200 px-2 py-1 rounded text-xs">
+                {odd.LayPrice1} ({odd.LaySize1})
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Fancy Odds */}
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="bg-blue-100 px-4 py-2 font-semibold text-blue-900">TOSS</div>
+        {fencyOdds.map((odd: any, i: number) => (
+          <div key={i} className="grid grid-cols-3 md:grid-cols-7 items-center gap-2 px-4 py-2 text-sm">
+            <div className="col-span-3 font-semibold text-gray-800">{odd.RunnerName}</div>
+            <div className="col-span-2">
+              <span className="bg-green-200 px-2 py-1 rounded text-xs">
+                {odd.BackPrice1} ({odd.BackSize1})
+              </span>
+            </div>
+            <div className="col-span-2">
+              <span className="bg-red-200 px-2 py-1 rounded text-xs">
+                {odd.LayPrice1} ({odd.LaySize1})
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

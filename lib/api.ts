@@ -10,7 +10,7 @@ export const API_ENDPOINTS = {
   verifyLogin: `${baseUrl}/verify-login`,
   resendOtp: `${baseUrl}/resend-otp`,
   signUp: `${baseUrl}/register`,
-  verifySignup: `${baseUrl}/verify-signup`,
+  verifySignup: `${baseUrl}/verify-register`,
   home: `${baseUrl}/index`,
   news: `${baseUrl}/news`,
   profile: `${baseUrl}/profile-setting`,
@@ -319,7 +319,7 @@ export async function verifySignupOtp(tempToken: string, otp: string) {
   }
 }
 
-export async function getProfile(): Promise<{ status: string; data: Profile | null }> {
+export async function getProfile(): Promise<ApiResponse<{ user: Profile }>> {
   try {
     const token = localStorage.getItem("auth_token")
     if (!token) return { status: "error", data: null }
@@ -387,7 +387,7 @@ export async function changePassword(passwordData: any) {
   }
 }
 
-export async function getBetHistory() {
+export async function getBetHistory(): Promise<ApiResponse<{ logs: BetLog[] }>> {
   try {
     const token = localStorage.getItem("auth_token")
     if (!token) throw new Error("No authentication token found")
@@ -403,7 +403,7 @@ export async function getBetHistory() {
     return await response.json()
   } catch (error) {
     console.error("Error fetching bet history:", error)
-    throw error
+    return { page_title: "Bet Log", success: false, data: { logs: [] } }
   }
 }
 
