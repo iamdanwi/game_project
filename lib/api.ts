@@ -3,7 +3,7 @@ import type { FancyBet, Profile, EventData } from "./types"
 // API Service
 const baseUrl = "https://book2500.funzip.in/api"
 // const baseUrl = "http://book2500.in:3000"
-// const baseUrl = "http://test.book2500.in"
+const baseUrl1 = "http://test.book2500.in"
 
 export const API_ENDPOINTS = {
   login: `${baseUrl}/login`,
@@ -25,11 +25,13 @@ export const API_ENDPOINTS = {
   withdrawPost: `${baseUrl}/withdraw/confirm`,
   changePassword: `${baseUrl}/password`,
   updateProfile: `${baseUrl}/profile-setting`,
-  categoryMatch: `${baseUrl}/category/`,
-  events: `${baseUrl}/fetch-event/`,
-  eventOdds: `${baseUrl}/fetch-event-odds`,
-  bookmakerOdds: `${baseUrl}/fetch-bookmaker-odds`,
-  fancyOdds: `${baseUrl}/fetch-fancy-odds`,
+
+  // this will fetch data from baseUrl1
+  categoryMatch: `${baseUrl1}/category/`,
+  events: `${baseUrl1}/fetch-event/`,
+  eventOdds: `${baseUrl1}/fetch-event-with-odds`,
+  bookmakerOdds: `${baseUrl1}/fetch-bookmaker-odds`,
+  fancyOdds: `${baseUrl1}/fetch-fancy-odds`,
 }
 
 // Types for API responses
@@ -121,7 +123,7 @@ export async function fetchEvents(): Promise<EventData[]> {
     //   headers["Authorization"] = `Bearer ${token}`
     // }
 
-    const response = await fetch("https://test.book2500.in/fetch-event/")
+    const response = await fetch("https://test.book2500.in/fetch-event-with-odds/")
     if (!response.ok) {
       throw new Error(`Failed to fetch events: ${response.statusText}`)
     }
