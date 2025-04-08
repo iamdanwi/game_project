@@ -123,7 +123,7 @@ export default function CricketPage() {
                   <h2 className="text-xl sm:text-2xl font-bold text-white">TOP PLAYERS</h2>
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                     <Image
-                      src="/placeholder.svg"
+                      src="/coin.png"
                       alt="Coin"
                       width={40}
                       height={40}
