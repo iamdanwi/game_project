@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import type { Runner } from "@/lib/types"
 import { createPrediction } from "@/lib/api"
 import { toast } from "sonner"
+import { useAuth } from "@/context/AuthContext"
 
 interface SelectedBet {
     name: string
@@ -56,7 +57,7 @@ interface FancyOdds {
 
 export default function LiveMatch() {
     const router = useRouter()
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const { isAuthenticated } = useAuth()
     const [selectedBet, setSelectedBet] = useState<SelectedBet | null>(null)
     const [selectedOdds, setSelectedOdds] = useState("")
     const [selectedStake, setSelectedStake] = useState("")
@@ -70,11 +71,6 @@ export default function LiveMatch() {
     const searchParams = useSearchParams()
     const eventId = searchParams.get("match")
     const marketId = searchParams.get("market")
-
-    useEffect(() => {
-        const token = localStorage.getItem('auth_token')
-        setIsAuthenticated(!!token)
-    }, [])
 
     const updateUserBalance = async () => {
         try {
@@ -102,7 +98,8 @@ export default function LiveMatch() {
     }
 
     const handlePlaceBet = async () => {
-        if (!isAuthenticated) {
+        const token = localStorage.getItem('auth_token')
+        if (!token) {
             toast.error("Please login to place bets")
             router.push('/login')
             return
@@ -118,6 +115,14 @@ export default function LiveMatch() {
         const stakeAmount = Number.parseFloat(selectedStake)
         if (isNaN(stakeAmount) || stakeAmount < MIN_STAKE || stakeAmount > MAX_STAKE) {
             setBetError(`Stake must be between ${MIN_STAKE} and ${MAX_STAKE}`)
+            return
+        }
+
+        const currentBalance = Number.parseFloat(userBalance)
+        if (isNaN(currentBalance) || currentBalance < stakeAmount) {
+            toast.error("Insufficient balance", {
+                description: "Please add funds to your account"
+            })
             return
         }
 
@@ -176,12 +181,6 @@ export default function LiveMatch() {
         type: "back" | "lay" | "no" | "yes",
         section: "match" | "bookmaker" | "fancy",
     ) => {
-        if (!isAuthenticated) {
-            toast.error("Please login to place bets")
-            router.push('/login')
-            return
-        }
-
         setBetError(null)
 
         try {
@@ -272,24 +271,12 @@ export default function LiveMatch() {
         return () => clearInterval(interval)
     }, [eventId, marketId])
 
-    const renderLoginPrompt = () => (
-        <div className="bg-brand-darkPurple rounded-lg p-6 text-center">
-            <h3 className="text-xl font-bold text-white mb-4">Login Required</h3>
-            <p className="text-gray-300 mb-6">Please login to place bets and view odds</p>
-            <Button className="bg-brand-gold hover:bg-yellow-500 text-black font-bold">Login Now</Button>
-        </div>
-    )
-
     if (error)
         return (
             <div className="flex items-center justify-center min-h-screen bg-brand-purple">
                 <div className="text-red-400 text-xl">{error}</div>
             </div>
         )
-
-    if (!isAuthenticated) {
-        return <div className="mt-6">{renderLoginPrompt()}</div>
-    }
 
     return (
         <div className="min-h-screen bg-brand-purple p-2 sm:p-4">
@@ -322,12 +309,12 @@ export default function LiveMatch() {
                                             <div
                                                 key={`back-${i}`}
                                                 onClick={() => handleOddsClick(runner, "back", "match")}
-                                                className={`relative bg-blue-600/20 rounded p-2 text-center ${(runner.ex?.availableToBack?.[i]?.price ?? 0) > 0 ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                                className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${(runner.ex?.availableToBack?.[i]?.price ?? 0) > 0 ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
                                             >
-                                                <div className="text-blue-400 font-bold">
+                                                <div className="text-white font-bold">
                                                     {(runner.ex?.availableToBack?.[i]?.price ?? 0).toFixed(2)}
                                                 </div>
-                                                <div className="text-xs text-gray-400">
+                                                <div className="text-xs text-gray-200">
                                                     {runner.ex?.availableToBack?.[i]?.size.toLocaleString() || "0"}
                                                 </div>
                                                 {(!runner.ex?.availableToBack?.[i]?.price || runner.ex?.availableToBack?.[i]?.price === 0) && (
@@ -341,12 +328,12 @@ export default function LiveMatch() {
                                             <div
                                                 key={`lay-${i}`}
                                                 onClick={() => handleOddsClick(runner, "lay", "match")}
-                                                className={`relative bg-pink-600/20 rounded p-2 text-center ${(runner.ex?.availableToLay?.[i]?.price ?? 0) > 0 ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                                className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${(runner.ex?.availableToLay?.[i]?.price ?? 0) > 0 ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
                                             >
-                                                <div className="text-pink-400 font-bold">
+                                                <div className="text-white font-bold">
                                                     {runner.ex?.availableToLay?.[i]?.price.toFixed(2) || "-"}
                                                 </div>
-                                                <div className="text-xs text-gray-400">
+                                                <div className="text-xs text-gray-200">
                                                     {runner.ex?.availableToLay?.[i]?.size.toLocaleString() || "0"}
                                                 </div>
                                                 {(!runner.ex?.availableToLay?.[i]?.price || runner.ex?.availableToLay?.[i]?.price === 0) && (
@@ -393,34 +380,32 @@ export default function LiveMatch() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-2 sm:gap-4">
                                         <div
-                                            className={`relative bg-blue-600/20 rounded p-2 text-center ${runner.status === "ACTIVE" ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50"
-                                                }`}
+                                            className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${(runner.batb?.[0]?.[0] ?? 0) > 0 ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
                                         >
-                                            <div className="text-blue-400 font-bold">
+                                            <div className="text-white font-bold">
                                                 {runner.batb?.[0]?.[0] || "-"}
                                             </div>
-                                            <div className="text-xs text-gray-400">
+                                            <div className="text-xs text-gray-200">
                                                 {runner.batb?.[0]?.[1]?.toLocaleString() || "0"}
                                             </div>
-                                            {runner.status !== "ACTIVE" && (
+                                            {(!runner.batb?.[0]?.[0] || runner.batb?.[0]?.[0] === 0) && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                    {runner.status}
+                                                    SUSPENDED
                                                 </div>
                                             )}
                                         </div>
                                         <div
-                                            className={`relative bg-pink-600/20 rounded p-2 text-center ${runner.status === "ACTIVE" ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50"
-                                                }`}
+                                            className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${(runner.batl?.[0]?.[0] ?? 0) > 0 ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
                                         >
-                                            <div className="text-pink-400 font-bold">
+                                            <div className="text-white font-bold">
                                                 {runner.batl?.[0]?.[0] || "-"}
                                             </div>
-                                            <div className="text-xs text-gray-400">
+                                            <div className="text-xs text-gray-200">
                                                 {runner.batl?.[0]?.[1]?.toLocaleString() || "0"}
                                             </div>
-                                            {runner.status !== "ACTIVE" && (
+                                            {(!runner.batl?.[0]?.[0] || runner.batl?.[0]?.[0] === 0) && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                    {runner.status}
+                                                    SUSPENDED
                                                 </div>
                                             )}
                                         </div>
@@ -450,12 +435,10 @@ export default function LiveMatch() {
                                     <div className="grid grid-cols-2 gap-2 sm:gap-4">
                                         <div
                                             onClick={() => handleOddsClick(odd, "no", "fancy")}
-                                            className={`relative ${odd.isSuspended || odd.BackPrice1 <= 0 ? "opacity-50" : ""}`}
+                                            className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${odd.isSuspended || odd.BackPrice1 <= 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                                         >
-                                            <div className="bg-blue-600/20 hover:bg-blue-600/30 rounded p-2 text-center cursor-pointer">
-                                                <div className="text-blue-400 font-bold">{odd.BackPrice1}</div>
-                                                <div className="text-xs text-gray-400">{odd.BackSize1.toLocaleString()}</div>
-                                            </div>
+                                            <div className="text-white font-bold">{odd.BackPrice1}</div>
+                                            <div className="text-xs text-gray-200">{odd.BackSize1.toLocaleString()}</div>
                                             {(odd.isSuspended || !odd.BackPrice1 || odd.BackPrice1 === 0) && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
                                                     SUSPENDED
@@ -464,12 +447,10 @@ export default function LiveMatch() {
                                         </div>
                                         <div
                                             onClick={() => handleOddsClick(odd, "yes", "fancy")}
-                                            className={`relative ${odd.isSuspended || odd.LayPrice1 <= 0 ? "opacity-50" : ""}`}
+                                            className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${odd.isSuspended || odd.LayPrice1 <= 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                                         >
-                                            <div className="bg-pink-600/20 hover:bg-pink-600/30 rounded p-2 text-center cursor-pointer">
-                                                <div className="text-pink-400 font-bold">{odd.LayPrice1}</div>
-                                                <div className="text-xs text-gray-400">{odd.LaySize1.toLocaleString()}</div>
-                                            </div>
+                                            <div className="text-white font-bold">{odd.LayPrice1}</div>
+                                            <div className="text-xs text-gray-200">{odd.LaySize1.toLocaleString()}</div>
                                             {(odd.isSuspended || !odd.LayPrice1 || odd.LayPrice1 === 0) && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
                                                     SUSPENDED
