@@ -344,27 +344,8 @@ export default function LiveMatch() {
                 <img src="/trophy.png" alt="BOOK2500" className="h-[70px]" />
             </div>
 
-            {/* Match Information */}
-            <div className="bg-gradient-to-b from-purple-900 to-purple-950 p-4 border-b border-purple-800">
-                <div className="text-white text-xl font-bold mb-2">{team1} vs {team2}</div>
-
-                {/* Live Score Iframe */}
-                <div className="w-full h-[400px] bg-black/30 rounded-lg overflow-hidden mb-4">
-                    <iframe
-                        ref={iframeRef}
-                        src="https://www.satsports.net/score_widget/index.html?id=58145125"
-                        className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
-                        allowFullScreen
-                        style={{
-                            minHeight: "400px",
-                            display: "block",
-                            backgroundColor: "transparent"
-                        }}
-                    />
-                </div>
-            </div>
- {/* Match Information */}
+            
+   {/* Match Information */}
             <div className="bg-gradient-to-b from-purple-900 to-purple-950 p-4 border-b border-purple-800">
                 <div className="text-white text-xl font-bold mb-2">{team1} vs {team2}</div>
 
