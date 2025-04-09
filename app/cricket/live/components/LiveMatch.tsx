@@ -363,7 +363,48 @@ export default function LiveMatch() {
                     />
                 </div>
             </div>
+ {/* Match Information */}
+            <div className="bg-gradient-to-b from-purple-900 to-purple-950 p-4 border-b border-purple-800">
+                <div className="text-white text-xl font-bold mb-2">{team1} vs {team2}</div>
 
+                {/* Toggle buttons */}
+                <div className="flex gap-2 mb-4">
+                    <Button
+                        variant={showVideo ? "outline" : "default"}
+                        onClick={() => setShowVideo(false)}
+                        className={`${!showVideo ? 'bg-brand-gold text-black' : 'text-brand-gold border-brand-gold'}`}
+                    >
+                        Live Score
+                    </Button>
+                    <Button
+                        variant={showVideo ? "default" : "outline"}
+                        onClick={() => setShowVideo(true)}
+                        className={`${showVideo ? 'bg-brand-gold text-black' : 'text-brand-gold border-brand-gold'}`}
+                    >
+                        Live Match
+                    </Button>
+                </div>
+
+                {/* Live Score/Video Container */}
+                <div className="w-full h-[400px] bg-black/30 rounded-lg overflow-hidden mb-4">
+                    {showVideo ? (
+                        <VideoStream matchId="34195132" />
+                    ) : (
+                        <iframe
+                            ref={iframeRef}
+                            src="https://www.satsports.net/score_widget/index.html?id=58145125"
+                            className="w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+                            allowFullScreen
+                            style={{
+                                minHeight: "400px",
+                                display: "block",
+                                backgroundColor: "transparent"
+                            }}
+                        />
+                    )}
+                </div>
+            </div>
             {/* Main Content */}
             <div className="flex flex-col lg:flex-row">
                 {/* Match Sections */}
