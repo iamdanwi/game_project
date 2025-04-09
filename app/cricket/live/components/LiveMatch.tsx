@@ -9,6 +9,7 @@ import { createPrediction } from "@/lib/api"
 import { toast } from "sonner"
 import { useAuth } from "@/context/AuthContext"
 import { useBalance } from "@/context/BalanceContext"
+import { VideoStream } from "./VideoStream"
 
 import { useIsMobile } from "@/components/ui/use-mobile"
 
@@ -96,7 +97,7 @@ export default function LiveMatch() {
         bookmaker: true,
         fancy: true
     })
-     const [showVideo, setShowVideo] = useState(false)
+    const [showVideo, setShowVideo] = useState(false)
 
     const searchParams = useSearchParams()
     const eventId = searchParams.get("match")
@@ -344,8 +345,8 @@ export default function LiveMatch() {
                 <img src="/trophy.png" alt="BOOK2500" className="h-[70px]" />
             </div>
 
-            
-   {/* Match Information */}
+
+            {/* Match Information */}
             <div className="bg-gradient-to-b from-purple-900 to-purple-950 p-4 border-b border-purple-800">
                 <div className="text-white text-xl font-bold mb-2">{team1} vs {team2}</div>
 
