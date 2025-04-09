@@ -341,9 +341,9 @@ export default function LiveMatch() {
     return (
         <div className="min-h-screen bg-black bg-opacity-90 p-0">
             {/* Logo Header */}
-            <div className="bg-purple-900 py-3 px-4 flex justify-center">
+{/*             <div className="bg-purple-900 py-3 px-4 flex justify-center">
                 <img src="/trophy.png" alt="BOOK2500" className="h-[70px]" />
-            </div>
+            </div> */}
 
 
             {/* Match Information */}
