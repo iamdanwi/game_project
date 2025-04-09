@@ -43,7 +43,7 @@ export default function OtpVerificationForm() {
             if (response.login === true || response.register === true) {
                 localStorage.setItem('auth_token', response.token)
                 localStorage.setItem('user_data', JSON.stringify(response.data))
-                router.push('/profile')
+                router.push('/')
             } else {
                 setError(response.message || "Invalid OTP. Please try again.")
             }

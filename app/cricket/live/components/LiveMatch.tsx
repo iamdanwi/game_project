@@ -8,6 +8,7 @@ import type { Runner } from "@/lib/types"
 import { createPrediction } from "@/lib/api"
 import { toast } from "sonner"
 import { useAuth } from "@/context/AuthContext"
+import { useBalance } from "@/context/BalanceContext"
 
 interface SelectedBet {
     name: string
@@ -58,6 +59,7 @@ interface FancyOdds {
 export default function LiveMatch() {
     const router = useRouter()
     const { isAuthenticated } = useAuth()
+    const { updateBalance } = useBalance()
     const [selectedBet, setSelectedBet] = useState<SelectedBet | null>(null)
     const [selectedOdds, setSelectedOdds] = useState("")
     const [selectedStake, setSelectedStake] = useState("")
@@ -144,12 +146,9 @@ export default function LiveMatch() {
             const response = await createPrediction(predictionData)
 
             if (response.success) {
-                const userData = JSON.parse(localStorage.getItem('user_data') || '{}')
-                const newBalance = Number(userData.balance) - Number(selectedStake)
-                userData.balance = newBalance.toString()
-                localStorage.setItem('user_data', JSON.stringify(userData))
-
-                setUserBalance(newBalance.toString())
+                const newBalance = (Number(userBalance) - Number(selectedStake)).toString()
+                updateBalance(newBalance)
+                setUserBalance(newBalance)
 
                 toast("Bet Placed Successfully!", {
                     description: `${selectedBet?.name} - ₹${selectedStake} @ ${selectedOdds}`,

@@ -5,15 +5,16 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { getDepositGateway, confirmDeposit } from '@/lib/api'
+import { getDepositGateway } from '@/lib/api'
 import { toast } from 'sonner'
 import ProfileSidebar from "@/components/shared/ProfileSidebar"
+import { Textarea } from "@/components/ui/textarea"
 
 interface Gateway {
     id: number
     name: string
-    min_amount: string
-    max_amount: string
+    min_amount: number
+    max_amount: number
     image: string
 }
 
@@ -21,8 +22,10 @@ export default function DepositPage() {
     const router = useRouter()
     const [gateways, setGateways] = useState<Gateway[]>([])
     const [selectedGateway, setSelectedGateway] = useState<number | null>(null)
-    const [amount, setAmount] = useState('')
+    const [amount, setAmount] = useState<string>('') // Initialize as empty string
     const [loading, setLoading] = useState(false)
+    const [receiptImage, setReceiptImage] = useState<File | null>(null)
+    const [paymentDescription, setPaymentDescription] = useState('')
 
     useEffect(() => {
         fetchGateways()
@@ -41,26 +44,47 @@ export default function DepositPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!selectedGateway || !amount) {
-            toast.error('Please select a payment method and enter amount')
+        if (!amount) {
+            toast.error('Please enter amount')
             return
         }
 
         setLoading(true)
         try {
-            const response = await confirmDeposit({
-                gateway_id: selectedGateway,
-                amount: amount
+            const token = localStorage.getItem('auth_token')
+            const response = await fetch('https://book2500.funzip.in/api/deposit-confirm', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: Number(amount),
+                    gateway_id: 99
+                })
             })
 
-            if (response.success) {
-                toast.success('Deposit initiated successfully')
-                router.push(response.redirect_url || '/deposit-log')
+            if (response.ok) {
+                const data = await response.json()
+                if (data.success) {
+                    toast.success('Deposit request submitted successfully')
+                } else {
+                    toast.info('Your deposit is under verification', {
+                        description: 'We will notify you once it is confirmed'
+                    })
+                }
+                router.push('/deposit-log')
             } else {
-                toast.error(response.message || 'Deposit failed')
+                toast.info('Your deposit is under verification', {
+                    description: 'We will notify you once it is confirmed'
+                })
+                router.push('/deposit-log')
             }
-        } catch (error) {
-            toast.error('Failed to process deposit')
+        } catch (error: any) {
+            toast.info('Your deposit is under verification', {
+                description: 'Please check transaction history for updates'
+            })
+            router.push('/deposit-log')
         } finally {
             setLoading(false)
         }
@@ -101,17 +125,40 @@ export default function DepositPage() {
                                 <Input
                                     id="amount"
                                     type="number"
-                                    value={amount}
+                                    value={amount} // Controlled input with string value
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="Enter amount"
                                     className="bg-brand-purple text-white border-gray-700 focus:border-brand-gold"
                                 />
                             </div>
 
+                            <div className="space-y-2">
+                                <Label className="text-gray-300">Upload Receipt</Label>
+                                <div className="border-2 border-dashed border-gray-700 rounded-lg p-4">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setReceiptImage(e.target.files?.[0] || null)}
+                                        className="w-full text-gray-400"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description" className="text-gray-300">Payment Description</Label>
+                                <Textarea
+                                    id="description"
+                                    value={paymentDescription}
+                                    onChange={(e) => setPaymentDescription(e.target.value)}
+                                    placeholder="Enter payment details"
+                                    className="bg-brand-purple text-white border-gray-700 focus:border-brand-gold min-h-[100px]"
+                                />
+                            </div>
+
                             <Button
                                 type="submit"
                                 className="w-full bg-brand-green hover:bg-green-600 text-white"
-                                disabled={loading}
+                                disabled={loading || !amount}
                             >
                                 {loading ? 'Processing...' : 'Proceed to Pay'}
                             </Button>

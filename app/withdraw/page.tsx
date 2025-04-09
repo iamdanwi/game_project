@@ -5,22 +5,15 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { getWithdrawMethods } from '@/lib/api'
 import { toast } from 'sonner'
+import Image from 'next/image'
 import ProfileSidebar from "@/components/shared/ProfileSidebar"
-
-interface WithdrawMethod {
-    id: number
-    name: string
-    min_limit: string
-    max_limit: string
-    processing_time: string
-}
+import type { Gateway, WithdrawMethodResponse } from '@/lib/types'
 
 export default function WithdrawPage() {
     const router = useRouter()
-    const [methods, setMethods] = useState<WithdrawMethod[]>([])
-    const [selectedMethod, setSelectedMethod] = useState<number | null>(null)
+    const [withdrawData, setWithdrawData] = useState<WithdrawMethodResponse | null>(null)
+    const [selectedMethod, setSelectedMethod] = useState<Gateway | null>(null)
     const [amount, setAmount] = useState('')
     const [accountDetails, setAccountDetails] = useState('')
     const [loading, setLoading] = useState(false)
@@ -31,9 +24,18 @@ export default function WithdrawPage() {
 
     const fetchWithdrawMethods = async () => {
         try {
-            const response = await getWithdrawMethods()
-            if (response.data) {
-                setMethods(response.data.methods || [])
+            const token = localStorage.getItem('auth_token')
+            const response = await fetch('https://book2500.funzip.in/api/withdraw', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            const data = await response.json()
+            if (data.success) {
+                setWithdrawData(data)
+            } else {
+                toast.error('Failed to load withdrawal methods')
             }
         } catch (error) {
             toast.error('Failed to load withdrawal methods')
@@ -42,50 +44,45 @@ export default function WithdrawPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
-        // Better validation checks
-        if (!amount || amount === '0') {
-            toast.error('Please enter a valid amount')
+        if (!selectedMethod) {
+            toast.error('Please select a withdrawal method')
             return
         }
 
-        if (!accountDetails) {
-            toast.error('Please enter account details')
+        const amountNum = Number(amount)
+        const minAmo = Number(selectedMethod.min_amo)
+        const maxAmo = Number(selectedMethod.max_amo)
+
+        if (amountNum < minAmo || amountNum > maxAmo) {
+            toast.error(`Amount must be between ₹${minAmo} and ₹${maxAmo}`)
             return
         }
 
         setLoading(true)
         try {
             const token = localStorage.getItem('auth_token')
-            if (!token) {
-                toast.error('Authentication required')
-                return
-            }
-            // console.log(`Bearer token: ${token}`)
-            const response = await fetch('https://book2500.funzip.in/api/withdraw', {
+            const response = await fetch('https://book2500.funzip.in/api/withdraw/confirm', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    gateway_id: selectedMethod.id,
                     amount: amount,
-                    method_id: selectedMethod,
-                    detail: accountDetails
+                    account_details: accountDetails
                 })
             })
 
             const data = await response.json()
-
             if (data.success) {
-                toast.success('Withdrawal request submitted')
+                toast.success('Withdrawal request submitted successfully')
                 router.push('/transaction-log')
             } else {
-                toast.error(data.message || 'Withdrawal failed')
+                toast.error(data.message || 'Withdrawal request failed')
             }
         } catch (error) {
             toast.error('Failed to process withdrawal')
-            console.error(error)
         } finally {
             setLoading(false)
         }
@@ -104,22 +101,22 @@ export default function WithdrawPage() {
                                 <div className="space-y-4">
                                     <Label className="text-gray-300">Select Withdrawal Method</Label>
                                     <div className="grid grid-cols-2 gap-4">
-                                        {methods.map((method) => (
+                                        {withdrawData?.gateways.map((gateway) => (
                                             <div
-                                                key={method.id}
-                                                className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedMethod === method.id
+                                                key={gateway.id}
+                                                className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedMethod?.id === gateway.id
                                                     ? 'border-brand-gold bg-brand-purple'
                                                     : 'border-gray-700 hover:border-brand-gold'
                                                     }`}
-                                                onClick={() => setSelectedMethod(method.id)}
+                                                onClick={() => setSelectedMethod(gateway)}
                                             >
-                                                <div className="text-white text-sm">{method.name}</div>
+                                                <div className="text-white text-sm">{gateway.name}</div>
                                                 <div className="text-xs text-gray-400 mt-1">
-                                                    Min: ₹{method.min_limit} - Max: ₹{method.max_limit}
+                                                    Min: ₹{gateway.min_amo} - Max: ₹{gateway.max_amo}
                                                 </div>
-                                                <div className="text-xs text-gray-400">
-                                                    Processing Time: {method.processing_time}
-                                                </div>
+                                                {/* <div className="text-xs text-gray-400">
+                                                    Processing Time: {gateway.processing_time}
+                                                </div> */}
                                             </div>
                                         ))}
                                     </div>

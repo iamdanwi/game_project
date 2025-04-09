@@ -114,3 +114,26 @@ export interface EventOddsResponse {
         runners: Runner[];
     };
 }
+
+export interface Gateway {
+    id: number;
+    name: string;
+    image: string;
+    min_amo: string;
+    max_amo: string;
+    chargefx: string;
+    chargepc: string;
+    rate: string;
+    processing_day: string;
+    currency: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    image_url: string;
+}
+
+export interface WithdrawMethodResponse {
+    page_title: string;
+    gateways: Gateway[];
+    success: boolean;
+}

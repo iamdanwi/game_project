@@ -6,6 +6,7 @@ import Header from "@/components/ui/header"
 import Footer from "@/components/ui/footer"
 import { AuthProvider } from "@/context/AuthContext"
 import { Toaster } from "sonner"
+import { BalanceProvider } from "@/context/BalanceContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,11 +25,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1 w-full px-4 md:px-6 mx-auto max-w-7xl">{children}</main>
-            <Footer />
-          </div>
+          <BalanceProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1 w-full px-4 md:px-6 mx-auto max-w-7xl">{children}</main>
+              <Footer />
+            </div>
+          </BalanceProvider>
         </AuthProvider>
         <Toaster richColors expand={true} position="top-center" />
       </body>

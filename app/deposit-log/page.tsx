@@ -7,7 +7,7 @@ interface DepositLog {
     id: string
     amount: string
     method: string
-    status: 'pending' | 'completed' | 'rejected'
+    status: number // Changed to number type
     transaction_id: string
     created_at: string
 }
@@ -23,18 +23,47 @@ export default function DepositLogPage() {
     const fetchDepositHistory = async () => {
         try {
             const token = localStorage.getItem('auth_token')
-            const response = await fetch('https://test.book2500.in/deposit-log', {
+            const response = await fetch('https://book2500.funzip.in/api/deposit-log', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
             })
             const data = await response.json()
+            console.log(data)
             setDeposits(data.deposits || [])
         } catch (error) {
             console.error('Failed to fetch deposit history:', error)
         } finally {
             setLoading(false)
         }
+    }
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit'
+        })
+    }
+
+    const getStatusDisplay = (status: string) => {
+        if (status === "0") {
+            return {
+                text: 'Pending',
+                className: 'bg-yellow-500/20 text-yellow-400'
+            }
+        } else if (status === "-1") {
+            return {
+                text: 'Failed',
+                className: 'bg-red-500/20 text-red-400'
+            }
+        } else {
+            return {
+                text: 'Successful',
+                className: 'bg-green-500/20 text-green-400'
+            }
+        }
+
     }
 
     return (
@@ -59,18 +88,13 @@ export default function DepositLogPage() {
                                 <tbody>
                                     {deposits.map((deposit) => (
                                         <tr key={deposit.id} className="border-b border-gray-700">
-                                            <td className="px-6 py-4 text-white">{deposit.created_at}</td>
+                                            <td className="px-6 py-4 text-white">{formatDate(deposit.created_at)}</td>
                                             <td className="px-6 py-4 text-white">₹{deposit.amount}</td>
                                             <td className="px-6 py-4 text-white">{deposit.method}</td>
                                             <td className="px-6 py-4 text-gray-300">{deposit.transaction_id}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded text-xs ${deposit.status === 'completed'
-                                                        ? 'bg-green-500/20 text-green-400'
-                                                        : deposit.status === 'pending'
-                                                            ? 'bg-yellow-500/20 text-yellow-400'
-                                                            : 'bg-red-500/20 text-red-400'
-                                                    }`}>
-                                                    {deposit.status}
+                                                <span className={`px-2 py-1 rounded text-xs ${getStatusDisplay(deposit.status.toString()).className}`}>
+                                                    {getStatusDisplay(deposit.status.toString()).text}
                                                 </span>
                                             </td>
                                         </tr>

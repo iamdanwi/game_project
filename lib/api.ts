@@ -432,16 +432,19 @@ export async function confirmDeposit(depositData: any) {
     const token = localStorage.getItem("auth_token")
     if (!token) throw new Error("No authentication token found")
 
-    const response = await fetch(API_ENDPOINTS.deposit, {
+    const response = await fetch(`${baseUrl}/deposit/confirm`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        // Don't set Content-Type when sending FormData
       },
-      body: JSON.stringify(depositData),
+      body: depositData // depositData should be FormData
     })
 
-    if (!response.ok) throw new Error("Failed to confirm deposit")
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Failed to confirm deposit")
+    }
     return await response.json()
   } catch (error) {
     console.error("Error confirming deposit:", error)

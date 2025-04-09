@@ -6,17 +6,18 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { Menu, X, User } from "lucide-react"
+import { Menu, X, User, LogOut } from "lucide-react"
+import { useBalance } from '@/context/BalanceContext'
 
 export default function Header() {
   const { isAuthenticated, logout } = useAuth()
+  const { balance } = useBalance()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
-
   const navigationLinks = [
     { href: "/", icon: "🏠", label: "HOME", color: "text-yellow-400" },
     { href: "/cricket", icon: "🏏", label: "CRICKET", color: "text-red-400" },
@@ -37,20 +38,20 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <>
+              <div className="hidden sm:flex items-center gap-2 text-gray-200">
+                <span>₹{balance}</span>
+              </div>
               <Link href="/profile">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-brand-purple bg-accent "
-                >
+                <Button variant="ghost" size="icon" className="bg-accent text-brand-purple">
                   <User className="h-5 w-5" />
                 </Button>
               </Link>
               <Button
                 onClick={logout}
-                className="bg-brand-red hover:bg-red-700 text-white"
+                className="bg-brand-red hover:bg-red-700 text-white gap-2"
               >
-                Logout
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </>
           ) : (
