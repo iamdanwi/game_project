@@ -69,6 +69,7 @@ export default function LiveMatch() {
     const [error, setError] = useState<string | null>(null)
     const [betError, setBetError] = useState<string | null>(null)
     const [userBalance, setUserBalance] = useState<string>("0")
+    const [showMobileBetForm, setShowMobileBetForm] = useState(false)
 
     const searchParams = useSearchParams()
     const eventId = searchParams.get("match")
@@ -227,6 +228,7 @@ export default function LiveMatch() {
             })
             setSelectedOdds(oddsValue)
             setSelectedStake("")
+            setShowMobileBetForm(true)
         } catch (error) {
             console.error("Error processing odds:", error)
             setBetError("Failed to process odds. Please try again.")
@@ -279,296 +281,366 @@ export default function LiveMatch() {
 
     return (
         <div className="min-h-screen bg-brand-purple p-2 sm:p-4">
-            <div className="flex flex-col lg:flex-row gap-2 sm:gap-4">
-                <div className="flex-1 space-y-6">
-                    {/* Header */}
-                    <div className="bg-brand-darkPurple rounded-lg p-4">
-                        <h1 className="text-2xl font-bold text-brand-gold">{eventOdds.eventName || "Live Match"}</h1>
-                    </div>
+            <div className="flex flex-col gap-2 sm:gap-4">
+                {/* Betting Panel for Mobile - Fixed at Bottom */}
+                <div className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 transform transition-transform duration-300 ${showMobileBetForm ? 'translate-y-0' : 'translate-y-full'}`}>
+                    <div className="bg-gradient-to-t from-black via-gray-900 to-transparent p-2">
+                        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg p-3 shadow-xl border border-gray-700">
+                            {/* Close button */}
+                            <button
+                                className="absolute top-1 right-1 text-gray-400 hover:text-white p-2"
+                                onClick={() => setShowMobileBetForm(false)}
+                            >
+                                ✕
+                            </button>
 
-                    {/* Match Odds Section */}
-                    <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
-                        <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
-                            <h2 className="text-lg sm:text-xl font-bold text-white">MATCH ODDS</h2>
-                            <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
-                        </div>
-                        <div className="p-4 text-sm">
-                            <div className="text-gray-400 mb-2">
-                                Min: {MIN_STAKE} | Max: {MAX_STAKE}
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div className="text-center text-blue-400 font-bold">BACK</div>
-                                <div className="text-center text-pink-400 font-bold">LAY</div>
-                            </div>
-                            {eventOdds.runners?.map((runner, idx) => (
-                                <div key={idx} className="mb-6 last:mb-0">
-                                    <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{runner.runner}</div>
-                                    <div className="grid grid-cols-6 gap-1 sm:gap-2">
-                                        {[2, 1, 0].map((i) => (
-                                            <div
-                                                key={`back-${i}`}
-                                                onClick={() => handleOddsClick(runner, "back", "match")}
-                                                className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${(runner.ex?.availableToBack?.[i]?.price ?? 0) > 0 ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
-                                            >
-                                                <div className="text-white font-bold">
-                                                    {(runner.ex?.availableToBack?.[i]?.price ?? 0).toFixed(2)}
-                                                </div>
-                                                <div className="text-xs text-gray-200">
-                                                    {runner.ex?.availableToBack?.[i]?.size.toLocaleString() || "0"}
-                                                </div>
-                                                {(!runner.ex?.availableToBack?.[i]?.price || runner.ex?.availableToBack?.[i]?.price === 0) && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                        SUSPENDED
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                        {[0, 1, 2].map((i) => (
-                                            <div
-                                                key={`lay-${i}`}
-                                                onClick={() => handleOddsClick(runner, "lay", "match")}
-                                                className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${(runner.ex?.availableToLay?.[i]?.price ?? 0) > 0 ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
-                                            >
-                                                <div className="text-white font-bold">
-                                                    {runner.ex?.availableToLay?.[i]?.price.toFixed(2) || "-"}
-                                                </div>
-                                                <div className="text-xs text-gray-200">
-                                                    {runner.ex?.availableToLay?.[i]?.size.toLocaleString() || "0"}
-                                                </div>
-                                                {(!runner.ex?.availableToLay?.[i]?.price || runner.ex?.availableToLay?.[i]?.price === 0) && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                        SUSPENDED
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
+                            {/* Compact Betting Panel for Mobile */}
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="text-white text-sm truncate flex-1">
+                                    {selectedBet ? (
+                                        <span>
+                                            {selectedBet.name} - {selectedBet.type}
+                                        </span>
+                                    ) : (
+                                        "Select a bet"
+                                    )}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Bookmaker Section */}
-                    <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
-                        <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
-                            <div>
-                                <h2 className="text-lg sm:text-xl font-bold text-white">{bookmakerMarket?.mname || "BOOKMAKER"}</h2>
-                                {bookmakerMarket?.rem && (
-                                    <p className="text-xs text-gray-300 mt-1">{bookmakerMarket.rem}</p>
-                                )}
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {bookmakerMarket?.inplay && (
-                                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">Live</span>
-                                )}
-                                <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
-                            </div>
-                        </div>
-                        <div className="p-4 text-sm">
-                            <div className="text-gray-400 mb-2">
-                                Min: {bookmakerMarket?.min || MIN_STAKE} | Max: {bookmakerMarket?.max || MAX_STAKE}
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4">
-                                <div className="text-center text-blue-400 font-bold">BACK</div>
-                                <div className="text-center text-pink-400 font-bold">LAY</div>
-                            </div>
-                            {(bookmakerMarket?.runners || []).map((runner, idx) => (
-                                <div key={idx} className="mb-6 last:mb-0">
-                                    <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
-                                        {runner.runnerName}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                                        <div
-                                            className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${(runner.batb?.[0]?.[0] ?? 0) > 0 ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
-                                        >
-                                            <div className="text-white font-bold">
-                                                {runner.batb?.[0]?.[0] || "-"}
-                                            </div>
-                                            <div className="text-xs text-gray-200">
-                                                {runner.batb?.[0]?.[1]?.toLocaleString() || "0"}
-                                            </div>
-                                            {(!runner.batb?.[0]?.[0] || runner.batb?.[0]?.[0] === 0) && (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                    SUSPENDED
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div
-                                            className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${(runner.batl?.[0]?.[0] ?? 0) > 0 ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
-                                        >
-                                            <div className="text-white font-bold">
-                                                {runner.batl?.[0]?.[0] || "-"}
-                                            </div>
-                                            <div className="text-xs text-gray-200">
-                                                {runner.batl?.[0]?.[1]?.toLocaleString() || "0"}
-                                            </div>
-                                            {(!runner.batl?.[0]?.[0] || runner.batl?.[0]?.[0] === 0) && (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                    SUSPENDED
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Fancy Section */}
-                    <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
-                        <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
-                            <h2 className="text-lg sm:text-xl font-bold text-white">FANCY</h2>
-                            <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
-                        </div>
-                        <div className="p-4 text-sm">
-                            <div className="text-gray-400 mb-2">
-                                Min: {MIN_STAKE} | Max: {MAX_STAKE}
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4">
-                                <div className="text-center text-blue-400 font-bold">NO</div>
-                                <div className="text-center text-pink-400 font-bold">YES</div>
-                            </div>
-                            {fancyOdds.map((odd, idx) => (
-                                <div key={idx} className="mb-6 last:mb-0">
-                                    <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{odd.RunnerName}</div>
-                                    <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                                        <div
-                                            onClick={() => handleOddsClick(odd, "no", "fancy")}
-                                            className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${odd.isSuspended || odd.BackPrice1 <= 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                        >
-                                            <div className="text-white font-bold">{odd.BackPrice1}</div>
-                                            <div className="text-xs text-gray-200">{odd.BackSize1.toLocaleString()}</div>
-                                            {(odd.isSuspended || !odd.BackPrice1 || odd.BackPrice1 === 0) && (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                    SUSPENDED
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div
-                                            onClick={() => handleOddsClick(odd, "yes", "fancy")}
-                                            className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${odd.isSuspended || odd.LayPrice1 <= 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                        >
-                                            <div className="text-white font-bold">{odd.LayPrice1}</div>
-                                            <div className="text-xs text-gray-200">{odd.LaySize1.toLocaleString()}</div>
-                                            {(odd.isSuspended || !odd.LayPrice1 || odd.LayPrice1 === 0) && (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
-                                                    SUSPENDED
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {odd.slidingText && <div className="text-xs text-gray-300 mt-1">{odd.slidingText}</div>}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Side - Betting Panel */}
-                <div className="w-full lg:w-[400px]">
-                    <div className="sticky top-4 lg:top-24">
-                        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg p-3 sm:p-4 shadow-xl border border-gray-700">
-                            {/* Betting Panel Header */}
-                            <div className="flex justify-between items-center mb-3 sm:mb-4">
-                                <div className="text-white">
-                                    <div className="font-bold text-base sm:text-lg">{eventOdds.eventName}</div>
-                                    <div className="text-gray-300 text-sm">
-                                        {selectedBet ? (
-                                            <span>
-                                                {selectedBet.name} - {selectedBet.type} ({selectedBet.section})
-                                            </span>
-                                        ) : (
-                                            "Select a bet"
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="text-gray-300 text-sm">
-                                    Balance: ₹{userBalance}
+                                <div className="text-gray-300 text-sm ml-2">
+                                    ₹{userBalance}
                                 </div>
                             </div>
 
-                            {/* Odds and Stakes Inputs */}
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <div className="text-sm text-gray-300 mb-1">Odds</div>
-                                    <Input
-                                        type="number"
-                                        value={selectedOdds}
-                                        onChange={(e) => setSelectedOdds(e.target.value)}
-                                        className="w-full bg-gray-700 text-white border-gray-600 focus:border-brand-gold"
-                                    />
-                                </div>
-                                <div>
-                                    <div className="text-sm text-gray-300 mb-1">Stakes</div>
-                                    <Input
-                                        type="number"
-                                        value={selectedStake}
-                                        onChange={(e) => setSelectedStake(e.target.value)}
-                                        className="w-full bg-gray-700 text-white border-gray-600 focus:border-brand-gold"
-                                    />
-                                </div>
+                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                <Input
+                                    type="number"
+                                    value={selectedOdds}
+                                    onChange={(e) => setSelectedOdds(e.target.value)}
+                                    className="bg-gray-700 text-white text-sm"
+                                    placeholder="Odds"
+                                />
+                                <Input
+                                    type="number"
+                                    value={selectedStake}
+                                    onChange={(e) => setSelectedStake(e.target.value)}
+                                    className="bg-gray-700 text-white text-sm"
+                                    placeholder="Stakes"
+                                />
                             </div>
 
-                            {/* Predefined Stakes Grid */}
-                            {predefinedStakes.map((row, rowIndex) => (
-                                <div key={rowIndex} className="grid grid-cols-4 gap-1 sm:gap-2 mb-3 sm:mb-4">
-                                    {row.map((stake, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => setSelectedStake(stake.toString())}
-                                            className="bg-gray-700 hover:bg-gray-600 text-white p-1 sm:p-2 text-center text-xs sm:text-sm rounded transition-colors"
-                                        >
-                                            {stake}
-                                        </button>
-                                    ))}
-                                </div>
-                            ))}
-
-                            {/* Control Buttons */}
-                            <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4">
+                            <div className="flex gap-2">
                                 <Button
                                     variant="default"
-                                    className="bg-brand-gold hover:bg-yellow-500 text-black font-bold"
-                                    onClick={() => handleStakeButton("min")}
-                                >
-                                    MIN
-                                </Button>
-                                <Button
-                                    variant="default"
-                                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold"
-                                    onClick={() => handleStakeButton("max")}
-                                >
-                                    MAX
-                                </Button>
-                                <Button
-                                    variant="default"
-                                    className="bg-red-500 hover:bg-red-600 text-white font-bold"
+                                    className="bg-gray-600 text-white flex-1 text-sm"
                                     onClick={handleClearStake}
                                 >
-                                    CLEAR
-                                </Button>
-                            </div>
-
-                            {/* Betting Panel Content */}
-                            {betError && <div className="text-red-500 text-sm mb-4">{betError}</div>}
-
-                            {/* Action Buttons */}
-                            <div className="flex justify-between gap-1 sm:gap-2">
-                                <Button
-                                    variant="default"
-                                    className="bg-gray-600 hover:bg-gray-700 text-white flex-1 font-bold"
-                                    onClick={handleClearStake}
-                                >
-                                    Cancel
+                                    Clear
                                 </Button>
                                 <Button
                                     variant="default"
-                                    className="bg-brand-green hover:bg-green-600 text-white flex-1 font-bold"
+                                    className="bg-brand-green text-white flex-1 text-sm"
                                     onClick={handlePlaceBet}
                                     disabled={!selectedBet || !selectedOdds || !selectedStake}
                                 >
                                     Place Bet
                                 </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 pb-[120px] lg:pb-0">
+                    {/* Left Side - Match Data */}
+                    <div className="flex-1 space-y-6">
+                        {/* Header */}
+                        <div className="bg-brand-darkPurple rounded-lg p-4">
+                            <h1 className="text-2xl font-bold text-brand-gold">{eventOdds.eventName || "Live Match"}</h1>
+                        </div>
+
+                        {/* Match Odds Section */}
+                        <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
+                            <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
+                                <h2 className="text-lg sm:text-xl font-bold text-white">MATCH ODDS</h2>
+                                <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
+                            </div>
+                            <div className="p-4 text-sm">
+                                <div className="text-gray-400 mb-2">
+                                    Min: {MIN_STAKE} | Max: {MAX_STAKE}
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <div className="text-center text-blue-400 font-bold">BACK</div>
+                                    <div className="text-center text-pink-400 font-bold">LAY</div>
+                                </div>
+                                {eventOdds.runners?.map((runner, idx) => (
+                                    <div key={idx} className="mb-6 last:mb-0">
+                                        <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{runner.runner}</div>
+                                        <div className="grid grid-cols-6 gap-1 sm:gap-2">
+                                            {[2, 1, 0].map((i) => (
+                                                <div
+                                                    key={`back-${i}`}
+                                                    onClick={() => handleOddsClick(runner, "back", "match")}
+                                                    className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${(runner.ex?.availableToBack?.[i]?.price ?? 0) > 0 ? "hover:bg-blue-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                                >
+                                                    <div className="text-white font-bold">
+                                                        {(runner.ex?.availableToBack?.[i]?.price ?? 0).toFixed(2)}
+                                                    </div>
+                                                    <div className="text-xs text-gray-200">
+                                                        {runner.ex?.availableToBack?.[i]?.size.toLocaleString() || "0"}
+                                                    </div>
+                                                    {(!runner.ex?.availableToBack?.[i]?.price || runner.ex?.availableToBack?.[i]?.price === 0) && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                            SUSPENDED
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            {[0, 1, 2].map((i) => (
+                                                <div
+                                                    key={`lay-${i}`}
+                                                    onClick={() => handleOddsClick(runner, "lay", "match")}
+                                                    className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${(runner.ex?.availableToLay?.[i]?.price ?? 0) > 0 ? "hover:bg-pink-600/30 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                                >
+                                                    <div className="text-white font-bold">
+                                                        {runner.ex?.availableToLay?.[i]?.price.toFixed(2) || "-"}
+                                                    </div>
+                                                    <div className="text-xs text-gray-200">
+                                                        {runner.ex?.availableToLay?.[i]?.size.toLocaleString() || "0"}
+                                                    </div>
+                                                    {(!runner.ex?.availableToLay?.[i]?.price || runner.ex?.availableToLay?.[i]?.price === 0) && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                            SUSPENDED
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Bookmaker Section */}
+                        <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
+                            <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
+                                <div>
+                                    <h2 className="text-lg sm:text-xl font-bold text-white">{bookmakerMarket?.mname || "BOOKMAKER"}</h2>
+                                    {bookmakerMarket?.rem && (
+                                        <p className="text-xs text-gray-300 mt-1">{bookmakerMarket.rem}</p>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {bookmakerMarket?.inplay && (
+                                        <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">Live</span>
+                                    )}
+                                    <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
+                                </div>
+                            </div>
+                            <div className="p-4 text-sm">
+                                <div className="text-gray-400 mb-2">
+                                    Min: {bookmakerMarket?.min || MIN_STAKE} | Max: {bookmakerMarket?.max || MAX_STAKE}
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4">
+                                    <div className="text-center text-blue-400 font-bold">BACK</div>
+                                    <div className="text-center text-pink-400 font-bold">LAY</div>
+                                </div>
+                                {(bookmakerMarket?.runners || []).map((runner, idx) => (
+                                    <div key={idx} className="mb-6 last:mb-0">
+                                        <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">
+                                            {runner.runnerName}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                                            <div
+                                                className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${(runner.batb?.[0]?.[0] ?? 0) > 0 ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                            >
+                                                <div className="text-white font-bold">
+                                                    {runner.batb?.[0]?.[0] || "-"}
+                                                </div>
+                                                <div className="text-xs text-gray-200">
+                                                    {runner.batb?.[0]?.[1]?.toLocaleString() || "0"}
+                                                </div>
+                                                {(!runner.batb?.[0]?.[0] || runner.batb?.[0]?.[0] === 0) && (
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                        SUSPENDED
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div
+                                                className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${(runner.batl?.[0]?.[0] ?? 0) > 0 ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                                            >
+                                                <div className="text-white font-bold">
+                                                    {runner.batl?.[0]?.[0] || "-"}
+                                                </div>
+                                                <div className="text-xs text-gray-200">
+                                                    {runner.batl?.[0]?.[1]?.toLocaleString() || "0"}
+                                                </div>
+                                                {(!runner.batl?.[0]?.[0] || runner.batl?.[0]?.[0] === 0) && (
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                        SUSPENDED
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Fancy Section */}
+                        <div className="bg-brand-darkPurple rounded-lg overflow-hidden">
+                            <div className="flex items-center justify-between bg-gradient-to-r from-purple-800 to-pink-500 p-3 sm:p-4">
+                                <h2 className="text-lg sm:text-xl font-bold text-white">FANCY</h2>
+                                <Button className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm">CASHOUT</Button>
+                            </div>
+                            <div className="p-4 text-sm">
+                                <div className="text-gray-400 mb-2">
+                                    Min: {MIN_STAKE} | Max: {MAX_STAKE}
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4">
+                                    <div className="text-center text-blue-400 font-bold">NO</div>
+                                    <div className="text-center text-pink-400 font-bold">YES</div>
+                                </div>
+                                {fancyOdds.map((odd, idx) => (
+                                    <div key={idx} className="mb-6 last:mb-0">
+                                        <div className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{odd.RunnerName}</div>
+                                        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                                            <div
+                                                onClick={() => handleOddsClick(odd, "no", "fancy")}
+                                                className={`relative bg-blue-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-blue-400/90 ${odd.isSuspended || odd.BackPrice1 <= 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                            >
+                                                <div className="text-white font-bold">{odd.BackPrice1}</div>
+                                                <div className="text-xs text-gray-200">{odd.BackSize1.toLocaleString()}</div>
+                                                {(odd.isSuspended || !odd.BackPrice1 || odd.BackPrice1 === 0) && (
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                        SUSPENDED
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div
+                                                onClick={() => handleOddsClick(odd, "yes", "fancy")}
+                                                className={`relative bg-pink-300/90 rounded p-1 sm:p-2 text-center text-white hover:bg-pink-400/90 ${odd.isSuspended || odd.LayPrice1 <= 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                            >
+                                                <div className="text-white font-bold">{odd.LayPrice1}</div>
+                                                <div className="text-xs text-gray-200">{odd.LaySize1.toLocaleString()}</div>
+                                                {(odd.isSuspended || !odd.LayPrice1 || odd.LayPrice1 === 0) && (
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded text-xs text-white">
+                                                        SUSPENDED
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {odd.slidingText && <div className="text-xs text-gray-300 mt-1">{odd.slidingText}</div>}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Side - Desktop Betting Panel */}
+                    <div className="hidden lg:block w-[400px]">
+                        <div className="sticky top-4 lg:top-24">
+                            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg p-3 sm:p-4 shadow-xl border border-gray-700">
+                                {/* Betting Panel Header */}
+                                <div className="flex justify-between items-center mb-3 sm:mb-4">
+                                    <div className="text-white">
+                                        <div className="font-bold text-base sm:text-lg">{eventOdds.eventName}</div>
+                                        <div className="text-gray-300 text-sm">
+                                            {selectedBet ? (
+                                                <span>
+                                                    {selectedBet.name} - {selectedBet.type} ({selectedBet.section})
+                                                </span>
+                                            ) : (
+                                                "Select a bet"
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm">
+                                        Balance: ₹{userBalance}
+                                    </div>
+                                </div>
+
+                                {/* Odds and Stakes Inputs */}
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <div className="text-sm text-gray-300 mb-1">Odds</div>
+                                        <Input
+                                            type="number"
+                                            value={selectedOdds}
+                                            onChange={(e) => setSelectedOdds(e.target.value)}
+                                            className="w-full bg-gray-700 text-white border-gray-600 focus:border-brand-gold"
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="text-sm text-gray-300 mb-1">Stakes</div>
+                                        <Input
+                                            type="number"
+                                            value={selectedStake}
+                                            onChange={(e) => setSelectedStake(e.target.value)}
+                                            className="w-full bg-gray-700 text-white border-gray-600 focus:border-brand-gold"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Predefined Stakes Grid */}
+                                {predefinedStakes.map((row, rowIndex) => (
+                                    <div key={rowIndex} className="grid grid-cols-4 gap-1 sm:gap-2 mb-3 sm:mb-4">
+                                        {row.map((stake, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => setSelectedStake(stake.toString())}
+                                                className="bg-gray-700 hover:bg-gray-600 text-white p-1 sm:p-2 text-center text-xs sm:text-sm rounded transition-colors"
+                                            >
+                                                {stake}
+                                            </button>
+                                        ))}
+                                    </div>
+                                ))}
+
+                                {/* Control Buttons */}
+                                <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4">
+                                    <Button
+                                        variant="default"
+                                        className="bg-brand-gold hover:bg-yellow-500 text-black font-bold"
+                                        onClick={() => handleStakeButton("min")}
+                                    >
+                                        MIN
+                                    </Button>
+                                    <Button
+                                        variant="default"
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold"
+                                        onClick={() => handleStakeButton("max")}
+                                    >
+                                        MAX
+                                    </Button>
+                                    <Button
+                                        variant="default"
+                                        className="bg-red-500 hover:bg-red-600 text-white font-bold"
+                                        onClick={handleClearStake}
+                                    >
+                                        CLEAR
+                                    </Button>
+                                </div>
+
+                                {/* Betting Panel Content */}
+                                {betError && <div className="text-red-500 text-sm mb-4">{betError}</div>}
+
+                                {/* Action Buttons */}
+                                <div className="flex justify-between gap-1 sm:gap-2">
+                                    <Button
+                                        variant="default"
+                                        className="bg-gray-600 hover:bg-gray-700 text-white flex-1 font-bold"
+                                        onClick={handleClearStake}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="default"
+                                        className="bg-brand-green hover:bg-green-600 text-white flex-1 font-bold"
+                                        onClick={handlePlaceBet}
+                                        disabled={!selectedBet || !selectedOdds || !selectedStake}
+                                    >
+                                        Place Bet
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
