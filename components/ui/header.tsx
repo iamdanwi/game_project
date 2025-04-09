@@ -4,16 +4,38 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 import { Menu, X, User, LogOut } from "lucide-react"
 import { useBalance } from '@/context/BalanceContext'
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, logout, checkAuth } = useAuth()
   const { balance } = useBalance()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    // Check auth status on mount and when auth state changes
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      checkAuth()
+    }
+  }, [checkAuth])
+
+  // Listen for storage changes (login/logout events)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const token = localStorage.getItem('auth_token')
+      if (token) {
+        checkAuth()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [checkAuth])
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -39,7 +61,7 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               <div className="hidden sm:flex items-center gap-2 text-gray-200">
-                <span>₹{balance}</span>
+                {/* <span>₹{balance}</span> */}
               </div>
               <Link href="/profile">
                 <Button variant="ghost" size="icon" className="bg-accent text-brand-purple">
@@ -47,7 +69,10 @@ export default function Header() {
                 </Button>
               </Link>
               <Button
-                onClick={logout}
+                onClick={() => {
+                  logout()
+                  router.push('/')
+                }}
                 className="bg-brand-red hover:bg-red-700 text-white gap-2"
               >
                 <LogOut className="h-4 w-4" />

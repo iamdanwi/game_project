@@ -1,58 +1,57 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 interface AuthContextType {
     isAuthenticated: boolean
+    setIsAuthenticated: (value: boolean) => void
     logout: () => void
-    checkAuth: () => boolean
-    balance: string
-    updateBalance: (newBalance: string) => void
+    checkAuth: () => void
 }
 
-const AuthContext = createContext<AuthContextType>({
-    isAuthenticated: false,
-    logout: () => { },
-    checkAuth: () => false,
-    balance: "0",
-    updateBalance: () => { }
-})
+const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
-    const [balance, setBalance] = useState("0")
-    const router = useRouter()
 
-    useEffect(() => {
-        checkAuth()
-        const userData = localStorage.getItem('user_data')
-        if (userData) {
-            const parsedData = JSON.parse(userData)
-            setBalance(parsedData.balance || "0")
-        }
+    const updateAuthState = useCallback(() => {
+        const token = localStorage.getItem('auth_token')
+        setIsAuthenticated(!!token)
     }, [])
 
-    const checkAuth = () => {
-        const token = localStorage.getItem('auth_token')
-        const isAuth = !!token
-        setIsAuthenticated(isAuth)
-        return isAuth
-    }
+    // Initialize on mount
+    useEffect(() => {
+        updateAuthState()
+    }, [updateAuthState])
 
-    const logout = () => {
+    // Listen for auth changes
+    useEffect(() => {
+        const handleAuthChange = () => {
+            updateAuthState()
+        }
+
+        window.addEventListener('auth-change', handleAuthChange)
+        window.addEventListener('storage', handleAuthChange)
+
+        return () => {
+            window.removeEventListener('auth-change', handleAuthChange)
+            window.removeEventListener('storage', handleAuthChange)
+        }
+    }, [updateAuthState])
+
+    const checkAuth = useCallback(() => {
+        updateAuthState()
+    }, [updateAuthState])
+
+    const logout = useCallback(() => {
         localStorage.removeItem('auth_token')
         localStorage.removeItem('user_data')
         setIsAuthenticated(false)
-        router.push('/login')
-    }
-
-    const updateBalance = (newBalance: string) => {
-        setBalance(newBalance)
-    }
+        window.dispatchEvent(new Event('auth-change'))
+    }, [])
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, logout, checkAuth, balance, updateBalance }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     )
