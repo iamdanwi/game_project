@@ -54,15 +54,8 @@ export default function HeroSlider() {
           className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 h-full relative">
-            <div className="relative z-10 flex flex-col justify-center px-8 md:px-16 bg-gradient-to-r from-black/80 to-transparent">
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">GET UP TO $ 125,000</h1>
-              <p className="text-xl md:text-2xl text-white mb-6">Bonus to new Clint's on the first 5 deposited</p>
-              <div>
-                <Button className="rounded-full bg-brand-red hover:bg-red-700 font-bold">MORE</Button>
-              </div>
-            </div>
-            <div className="absolute md:relative inset-0">
+          <div className="relative h-full">
+            <div className="absolute inset-0">
               <Image
                 src={slide.image_url}
                 alt={`Slide ${slide.id}`}
@@ -70,6 +63,13 @@ export default function HeroSlider() {
                 className="object-cover"
                 priority={index === currentSlide}
               />
+            </div>
+            <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 bg-gradient-to-r from-black/80 to-transparent max-w-[600px]">
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">GET UP TO $ 125,000</h1>
+              <p className="text-xl md:text-2xl text-white mb-6">Bonus to new Clint's on the first 5 deposited</p>
+              <div>
+                <Button className="rounded-full bg-brand-red hover:bg-red-700 font-bold">MORE</Button>
+              </div>
             </div>
           </div>
         </div>
