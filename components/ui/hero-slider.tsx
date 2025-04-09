@@ -64,13 +64,13 @@ export default function HeroSlider() {
                 priority={index === currentSlide}
               />
             </div>
-            <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 bg-gradient-to-r from-black/80 to-transparent max-w-[600px]">
+            {/* <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 bg-gradient-to-r from-black/80 to-transparent max-w-[600px]">
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">GET UP TO $ 125,000</h1>
               <p className="text-xl md:text-2xl text-white mb-6">Bonus to new Clint's on the first 5 deposited</p>
               <div>
                 <Button className="rounded-full bg-brand-red hover:bg-red-700 font-bold">MORE</Button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       ))}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -101,6 +101,8 @@ export default function LiveMatch() {
     const eventId = searchParams.get("match")
     const marketId = searchParams.get("market")
 
+    const iframeRef = useRef<HTMLIFrameElement>(null)
+
     const updateUserBalance = async () => {
         try {
             const userData = localStorage.getItem('user_data')
@@ -115,6 +117,17 @@ export default function LiveMatch() {
 
     useEffect(() => {
         updateUserBalance()
+    }, [])
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin === 'https://www.satsports.net' && event.data) {
+                console.log('Score update:', event.data)
+            }
+        }
+
+        window.addEventListener('message', handleMessage)
+        return () => window.removeEventListener('message', handleMessage)
     }, [])
 
     const handleStakeButton = (type: "min" | "max" | "predefined", value?: number) => {
@@ -331,50 +344,23 @@ export default function LiveMatch() {
             </div>
 
             {/* Match Information */}
-            <div className="bg-gradient-to-b from-purple-900 to-purple-950 p-4 text-center border-b border-purple-800">
+            <div className="bg-gradient-to-b from-purple-900 to-purple-950 p-4 border-b border-purple-800">
                 <div className="text-white text-xl font-bold mb-2">{team1} vs {team2}</div>
-                <div className="text-white opacity-70 text-sm">(0/0) - (0/0)</div>
 
-                {/* Cricket Scoreboard - only shows for cricket matches */}
-                <div className="mt-4 bg-black bg-opacity-30 rounded-lg p-2 overflow-x-auto">
-                    <table className="w-full text-white text-sm">
-                        <thead>
-                            <tr className="border-b border-gray-700">
-                                <th className="text-left p-2">Batsmen</th>
-                                <th className="p-2">R</th>
-                                <th className="p-2">B</th>
-                                <th className="p-2">4s</th>
-                                <th className="p-2">6s</th>
-                                <th className="p-2">SR</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td className="text-left p-2">-</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0.0</td>
-                            </tr>
-                            <tr>
-                                <td className="text-left p-2">-</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0</td>
-                                <td className="p-2">0.0</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div className="flex justify-center space-x-2 mt-2">
-                        <div className="text-white">This Over</div>
-                        {[0, 0, 0, 0, 0].map((ball, idx) => (
-                            <div key={idx} className="w-6 h-6 rounded-full border border-gray-500 flex items-center justify-center text-white">
-                                {ball}
-                            </div>
-                        ))}
-                    </div>
+                {/* Live Score Iframe */}
+                <div className="w-full h-[400px] bg-black/30 rounded-lg overflow-hidden mb-4">
+                    <iframe
+                        ref={iframeRef}
+                        src="https://www.satsports.net/score_widget/index.html?id=58145125"
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+                        allowFullScreen
+                        style={{
+                            minHeight: "400px",
+                            display: "block",
+                            backgroundColor: "transparent"
+                        }}
+                    />
                 </div>
             </div>
 
