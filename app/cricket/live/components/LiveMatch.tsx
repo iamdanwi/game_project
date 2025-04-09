@@ -96,6 +96,7 @@ export default function LiveMatch() {
         bookmaker: true,
         fancy: true
     })
+     const [showVideo, setShowVideo] = useState(false)
 
     const searchParams = useSearchParams()
     const eventId = searchParams.get("match")
