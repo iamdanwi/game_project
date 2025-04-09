@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Match Feed</title>
+    <style>
+        .container {
+            background: linear-gradient(to bottom, #44337a, #322659);
+            padding: 1rem;
+            border-bottom: 1px solid #553c9a;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .match-title {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .button-gold {
+            background-color: #b7791f;
+            color: black;
+        }
+
+        .button-outline {
+            background-color: transparent;
+            border: 1px solid #b7791f;
+            color: #b7791f;
+        }
+
+        .toggle-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-container iframe,
+        .content-container #videoStream {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .content-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+
+        <div class="toggle-container">
+            <button id="scoreButton" class="button button-gold">Live Score</button>
+            <button id="videoButton" class="button button-outline">Live Match</button>
+        </div>
+
+        <div class="content-container">
+            <iframe id="scoreFrame" src="https://www.satsports.net/score_widget/index.html?id=58145125"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope" allowfullscreen>
+            </iframe>
+            <div id="videoStream" class="hidden">
+                <iframe src="https://tvapp.1ten.live/event-play-2/34195132" width="100%" height="100%"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scoreButton = document.getElementById('scoreButton');
+        const videoButton = document.getElementById('videoButton');
+        const scoreFrame = document.getElementById('scoreFrame');
+        const videoStream = document.getElementById('videoStream');
+
+        scoreButton.addEventListener('click', () => {
+            scoreFrame.classList.remove('hidden');
+            videoStream.classList.add('hidden');
+            scoreButton.classList.replace('button-outline', 'button-gold');
+            videoButton.classList.replace('button-gold', 'button-outline');
+        });
+
+        videoButton.addEventListener('click', () => {
+            scoreFrame.classList.add('hidden');
+            videoStream.classList.remove('hidden');
+            videoButton.classList.replace('button-outline', 'button-gold');
+            scoreButton.classList.replace('button-gold', 'button-outline');
+        });
+    </script>
+</body>
+
+</html>
